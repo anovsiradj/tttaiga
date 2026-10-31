@@ -1,11 +1,13 @@
 # Form ID Convention & saveModal (taiga-core)
 
 ## NAMING CONVENTION (hard rule, semua module)
-- Modal form id: `single{Type}Form` — singleTaskForm, singleUsorForm, singleIsuForm, singleEpicForm, singleProjectForm, singleSprintForm
+- Modal form id: `single{Type}Form` — singleTaskForm, singleUsorForm, singleIsuForm, singleEpicForm, singleSprintForm
 - Hidden inputs: `single{Type}Id`, `single{Type}Version`
 - Field ids: `single{Type}{FieldPascal}` (singleTaskSubject, singleTaskAssignee, singleTaskBlocked)
 - Submit btn: `#submitSingle{Type}`
 - UI alias field (bukan API key): Usor=user_story, Sprint=milestone, Assignee=assigned_to
+
+> Note: Proyek module uses bulk-only workflow; no single create/edit form.
 
 ## saveModal (taiga-core.js:127)
 - `prefix = formId.replace('Form', '')` → id/version selector: `$('#' + prefix + 'Id')`

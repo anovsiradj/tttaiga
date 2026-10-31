@@ -1,7 +1,7 @@
 # ui-darktheme — Light/Dark Mode Toggle Troubleshooting
 
 ## Problem
-Toggle light/dark mode disabled di beberapa modul (project, sprint, usor, epic, task, isu).
+Toggle light/dark mode disabled di beberapa modul (proyek, sprint, usor, epik, task, isu).
 
 ## Root Cause (3 code path)
 

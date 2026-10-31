@@ -20,7 +20,7 @@
 - ALL list modules MUST call `taigaBindSelectionLogic(checkboxClass, taigaBulkSelectionCallback)` in render() after injecting HTML.
 - NEVER use manual `.on('change', updateSelectionCount)` — it bypasses master checkbox, bulk action enable/disable, and clear button logic.
 - `taigaBulkSelectionCallback` reads counts from DOM IDs stored in `taigaBulkBarIds` (set by `taigaUpdateListCounts`).
-- Checkbox classes: `task-checkbox`, `epic-checkbox`, `story-checkbox`, `issue-checkbox`, `project-checkbox`, `sprint-checkbox`.
+- Checkbox classes: `task-checkbox`, `epic-checkbox`, `story-checkbox`, `issue-checkbox`, `proyek-checkbox`, `sprint-checkbox`.
 - Regression source: commit `245bc8e` refactor removed `taigaBindSelectionLogic` calls from all app-*.js modules. Fixed 2026-08-20.
 
 ## LESSONS LEARNED (user corrections)
