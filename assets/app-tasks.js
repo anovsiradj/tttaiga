@@ -7,12 +7,22 @@ $(document).ready(function () {
     const config = window.taigaConfig || {};
     window.apiUrl = window.apiUrl || config.servers?.default?.api_url;
 
+    // Cached selector references for this module
+    const $sel = {
+        content:   TTTaiga.Selectors.$('#tasksContent'),
+        pagination: TTTaiga.Selectors.$('#tasksPagination'),
+        checkbox:  '.task-checkbox',
+        master:    TTTaiga.Selectors.$('#masterCheckbox'),
+        search:    TTTaiga.Selectors.$('#searchInput'),
+        submit:    TTTaiga.Selectors.$('#submitSingleTask')
+    };
+
     TTTaiga.Tasks = {
         load: function (page = 1) {
             taigaReplaceUrlQuery({ ...taigaGetFilterParams(), page: page });
             const params = { ...taigaGetFilterParams(), page: page };
 
-            $('#tasksContent').html(`
+            $sel.content.html(`
                 <div class="loading-spinner text-center p-3">
                     <div class="spinner-border text-primary" role="status"></div>
                 </div>
@@ -24,15 +34,15 @@ $(document).ready(function () {
                     taigaRenderPagination(xhr, '#tasksPagination', (page) => this.load(page));
                 }.bind(this),
                 onError: function (xhr) {
-                    $('#tasksContent').html(`<div class="alert alert-danger">Unable to load tasks. Please try again.</div>`);
-                    $('#tasksPagination').empty();
+                    $sel.content.html(`<div class="alert alert-danger">Unable to load tasks. Please try again.</div>`);
+                    $sel.pagination.empty();
                 }
             });
         },
         render: function (tasks, xhr) {
             taigaUpdateListCounts(xhr, tasks.length, 'totalTasks', 'filteredTasks', 'selectedTasksCount');
             if (tasks.length === 0) {
-                $('#tasksContent').html(`<div class="text-muted italic p-3 text-center"><em>(kosong)</em></div>`);
+                $sel.content.html(`<div class="text-muted italic p-3 text-center"><em>(kosong)</em></div>`);
                 return;
             }
             let html = '<div class="row taiga-list-grid">';
@@ -76,18 +86,18 @@ $(document).ready(function () {
                 </div>`;
             });
             html += '</div>';
-            $('#tasksContent').html(html);
+            $sel.content.html(html);
             taigaBindSelectionLogic('task-checkbox', taigaBulkSelectionCallback, 'tasks');
-            $('.task-checkbox').each(function() {
+            $(sel.checkbox).each(function() {
                 var id = $(this).val();
                 if (TTTaiga.selectedItems.tasks.some(i => i.id == id)) {
                     $(this).prop('checked', true);
                     $(this).closest('.card').addClass('taiga-selected');
                 }
             });
-            var total = $('.task-checkbox').length;
-            var checked = $('.task-checkbox:checked').length;
-            $('#masterCheckbox').prop('checked', total > 0 && checked === total);
+            var total = $(sel.checkbox).length;
+            var checked = $(sel.checkbox + ':checked').length;
+            $sel.master.prop('checked', total > 0 && checked === total);
         },
         populateBulkCreateDropdowns: function() {
             $('#bulkTaskProject').closest('.col-md-6').show();
@@ -101,7 +111,7 @@ $(document).ready(function () {
                 usorSel: '#bulkTaskUserStory'
             });
 
-            const currentSearch = $('#searchInput').val();
+            const currentSearch = $sel.search.val();
             if (currentSearch) {
                 $('#activeTaskSearchQuery').text(currentSearch);
                 $('#bulkTaskSearchContext').removeClass('d-none');
@@ -117,8 +127,8 @@ $(document).ready(function () {
                 return;
             }
 
-            const projectId = $('#bulkTaskProject').val() || $('#projectSelect').val();
-            const userStoryId = $('#bulkTaskUserStory').val() || $('#userStorySelect').val();
+            const projectId = $('#bulkTaskProject').val() || TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val();
+            const userStoryId = $('#bulkTaskUserStory').val() || TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.userStory).val();
             const statusId = $('#bulkTaskStatus').val();
             const assigneeId = $('#bulkTaskAssignee').val();
             const commonDescription = $('#bulkTaskDescription').val().trim();
@@ -128,14 +138,14 @@ $(document).ready(function () {
                 return;
             }
 
-            const $btn = $('#submitBulkTaskCreate');
+            const $btn = TTTaiga.Selectors.$('#submitBulkTaskCreate');
             $btn.prop('disabled', true).text('Creating...');
             $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             let createdCount = 0;
             let errorCount = 0;
 
-            const currentSearch = $('#searchInput').val();
+            const currentSearch = $sel.search.val();
             const prependSearch = $('#prependTaskSearchCheck').is(':checked');
 
             titles.forEach(title => {
@@ -189,7 +199,7 @@ $(document).ready(function () {
                 return;
             }
 
-            const $btn = $('#confirmBulkDeleteTasks');
+            const $btn = TTTaiga.Selectors.$('#confirmBulkDeleteTasks');
             $btn.prop('disabled', true).text('Deleting...');
             $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
@@ -208,7 +218,7 @@ $(document).ready(function () {
     };
 
     // Bind event handlers
-    $('#submitSingleTask').on('click', function () {
+    TTTaiga.Selectors.$('#submitSingleTask').on('click', function () {
         TTTaiga.Form.saveModal({
             endpoint: 'api.php/tasks',
             formId: 'singleTaskForm',
@@ -225,7 +235,7 @@ $(document).ready(function () {
             }
         });
     });
-    $('#singleTaskModal').on('show.bs.modal', function (e) {
+    TTTaiga.Selectors.$('#singleTaskModal').on('show.bs.modal', function (e) {
         const id = $(e.relatedTarget).data('task-id');
         if (!id || Number(id) <= 0) {
             $('#singleTaskModalLabel').text('Create Task');
@@ -269,13 +279,13 @@ $(document).ready(function () {
             }
         });
     });
-    $('#bulkCreateTaskModal').on('show.bs.modal', function() { 
+    TTTaiga.Selectors.$('#bulkCreateTaskModal').on('show.bs.modal', function() { 
         TTTaiga.Tasks.populateBulkCreateDropdowns(); 
     });
-    $('#submitBulkTaskCreate').on('click', function() { TTTaiga.Tasks.submitBulkCreate(); });
-    $('#bulkUpdateTaskModal').on('show.bs.modal', function() { TTTaiga.BulkUpdate.open('tasks'); });
-    $('#submitBulkTaskUpdate').on('click', function() { TTTaiga.BulkUpdate.submit('tasks'); });
-    $('#confirmBulkDeleteTasks').on('click', function() { TTTaiga.Tasks.deleteBulk(); });
+    TTTaiga.Selectors.$('#submitBulkTaskCreate').on('click', function() { TTTaiga.Tasks.submitBulkCreate(); });
+    TTTaiga.Selectors.$('#bulkUpdateTaskModal').on('show.bs.modal', function() { TTTaiga.BulkUpdate.open('tasks'); });
+    TTTaiga.Selectors.$('#submitBulkTaskUpdate').on('click', function() { TTTaiga.BulkUpdate.submit('tasks'); });
+    TTTaiga.Selectors.$('#confirmBulkDeleteTasks').on('click', function() { TTTaiga.Tasks.deleteBulk(); });
 
     taigaBindFilters((page) => TTTaiga.Tasks.load(page));
 

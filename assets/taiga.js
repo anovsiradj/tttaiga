@@ -8,6 +8,59 @@ TTTaiga.selectedItems = {
     projects: []
 };
 
+/**
+ * Selector Grouping — Organized id/class selectors by domain.
+ * Reduces repeated DOM lookups and makes selectors easy to maintain.
+ *
+ * Groups:
+ *   filter      — standard list page filter inputs/selects
+ *   bulkBar     — sticky bulk action bar elements
+ *   common      — globally reused elements (master checkbox, refresh, logout)
+ *
+ * Usage:
+ *   TTTaiga.Selectors.strings.filter.project   -> '#projectSelect'
+ *   TTTaiga.Selectors.$('#projectSelect')      -> cached jQuery object
+ *   TTTaiga.Selectors.resetCache()             — clear cache after DOM changes
+ */
+TTTaiga.Selectors = {
+    strings: {
+        filter: {
+            search:      '#searchInput',
+            project:     '#projectSelect',
+            status:      '#statusSelect',
+            epic:        '#epicSelect',
+            userStory:   '#userStorySelect',
+            assignedTo:  '#assignedToSelect',
+            sort:        '#sortSelect'
+        },
+        bulkBar: {
+            container:       '#bulkActionsBar',
+            masterCheckbox:  '#masterCheckbox',
+            clearSelection:  '#clearSelectionBtn',
+            dropdown:        '#bulkActionsDropdown',
+            dropdownContainer: '#bulkActionsDropdownContainer'
+        },
+        common: {
+            masterCheckbox: '#masterCheckbox',
+            refreshBtn:     '#refreshBtn',
+            logoutBtn:      '#logoutBtn'
+        }
+    },
+
+    cache: {},
+
+    $: function (selector) {
+        if (!this.cache[selector]) {
+            this.cache[selector] = $(selector);
+        }
+        return this.cache[selector];
+    },
+
+    resetCache: function () {
+        this.cache = {};
+    }
+};
+
 TTTaiga.BulkUpdate = {
     config: {
         tasks: {
@@ -622,12 +675,14 @@ function taigaUpdateListCounts(xhr, visibleCount, totalId, filteredId, selection
 }
 
 function taigaBulkSelectionCallback(checkedCount) {
-	const total = parseInt($('#' + taigaBulkBarIds.totalId).text()) || 0;
-	const filtered = parseInt($('#' + taigaBulkBarIds.filteredId).text()) || 0;
+	const $totalEl = TTTaiga.Selectors.$('#' + taigaBulkBarIds.totalId);
+	const $filteredEl = TTTaiga.Selectors.$('#' + taigaBulkBarIds.filteredId);
+	const total = parseInt($totalEl.text()) || 0;
+	const filtered = parseInt($filteredEl.text()) || 0;
 	taigaUpdateSelectionUI(total, filtered, checkedCount, taigaBulkBarIds.totalId, taigaBulkBarIds.filteredId, taigaBulkBarIds.selectionId);
 	// Fallback: also update generic selected count if specific ID not found
-	if (!taigaBulkBarIds.selectionId || !$('#' + taigaBulkBarIds.selectionId).length) {
-		$('#selectedCount').text(checkedCount);
+	if (!taigaBulkBarIds.selectionId || !TTTaiga.Selectors.$('#' + taigaBulkBarIds.selectionId).length) {
+		TTTaiga.Selectors.$('#selectedCount').text(checkedCount);
 	}
 }
 
@@ -637,13 +692,13 @@ function taigaBulkSelectionCallback(checkedCount) {
  */
 function taigaGetFilterParams() {
 	const params = {};
-	const q = $('#searchInput').val()?.trim();
-	const project = $('#projectSelect').val();
-	const status = $('#statusSelect').val();
-	const epic = $('#epicSelect').val();
-	const usor = $('#userStorySelect').val();
-	const assignedTo = $('#assignedToSelect').val();
-	const orderBy = $('#sortSelect').val();
+	const q = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.search).val()?.trim();
+	const project = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val();
+	const status = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.status).val();
+	const epic = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.epic).val();
+	const usor = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.userStory).val();
+	const assignedTo = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.assignedTo).val();
+	const orderBy = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.sort).val();
 
 	if (q) params.q = q;
 	if (project) params.project = project;
@@ -770,48 +825,48 @@ function taigaBindFilters(onFilterChange) {
 	let searchTimeout;
 
 	// Search input with debounce
-	$('#searchInput').on('input', function () {
+	TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.search).on('input', function () {
 		clearTimeout(searchTimeout);
 		searchTimeout = setTimeout(() => onFilterChange(1), 500);
 	});
 
 	// Initialize Select2 Dropdowns
-	if ($('#projectSelect').length) {
-		taigaInitRemoteSelect2('#projectSelect', '/projects', {
+	if (TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).length) {
+		taigaInitRemoteSelect2(TTTaiga.Selectors.strings.filter.project, '/projects', {
 			placeholder: '(Semua Project)',
 			additionalParams: () => ({ member: taigaModel.id })
 		});
 	}
 
-	if ($('#epicSelect').length) {
-		taigaInitRemoteSelect2('#epicSelect', '/epics', {
+	if (TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.epic).length) {
+		taigaInitRemoteSelect2(TTTaiga.Selectors.strings.filter.epic, '/epics', {
 			placeholder: '(Semua Epik)',
 			additionalParams: () => {
-				const pid = $('#projectSelect').val();
+				const pid = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val();
 				return pid ? { project: pid } : {};
 			}
 		});
 	}
 
-	if ($('#userStorySelect').length) {
-		taigaInitRemoteSelect2('#userStorySelect', '/userstories', {
+	if (TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.userStory).length) {
+		taigaInitRemoteSelect2(TTTaiga.Selectors.strings.filter.userStory, '/userstories', {
 			placeholder: '(Semua Usor)',
 			formatText: (item) => `#${item.ref}: ${item.subject}`,
 			additionalParams: () => {
-				const pid = $('#projectSelect').val();
+				const pid = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val();
 				return pid ? { project: pid } : {};
 			}
 		});
 	}
 
-	if ($('#assignedToSelect').length) {
-		taigaInitStaticSelect2($('#assignedToSelect'), {
+	if (TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.assignedTo).length) {
+		taigaInitStaticSelect2(TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.assignedTo), {
 			placeholder: '(Semua User)'
 		});
 
 		const refreshAssignedToFilter = function () {
-			const pid = $('#projectSelect').val();
-			const $assigned = $('#assignedToSelect');
+			const pid = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val();
+			const $assigned = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.assignedTo);
 			const $aModal = $assigned.closest('.modal');
 			const dropdownParent = $aModal.length && $aModal.attr('id') ? $('#' + $aModal.attr('id')) : $(document.body);
 
@@ -862,14 +917,14 @@ function taigaBindFilters(onFilterChange) {
 		});
 	}
 
-	if ($('#statusSelect').length) {
-		taigaInitStaticSelect2($('#statusSelect'), {
+	if (TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.status).length) {
+		taigaInitStaticSelect2(TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.status), {
 			placeholder: '(Pilih Project dulu)'
 		});
 
 		const refreshStatusFilter = function () {
-			const pid = $('#projectSelect').val();
-			const $status = $('#statusSelect');
+			const pid = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val();
+			const $status = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.status);
 			const type = $status.data('status-type');
 			const $sModal = $status.closest('.modal');
 			const dropdownParent = $sModal.length && $sModal.attr('id') ? $('#' + $sModal.attr('id')) : $(document.body);
@@ -923,12 +978,12 @@ function taigaBindFilters(onFilterChange) {
 		};
 
 		refreshStatusFilter();
-		$('#projectSelect').off('change.statusFilter').on('change.statusFilter', function () {
+		TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).off('change.statusFilter').on('change.statusFilter', function () {
 			refreshStatusFilter();
 		});
 	}
 
-	$('#sortSelect').select2({
+	TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.sort).select2({
 		theme: 'bootstrap-5',
 		width: '100%',
 		placeholder: 'Urutkan...',
@@ -936,15 +991,16 @@ function taigaBindFilters(onFilterChange) {
 	});
 
 	// Dropdown and Select2 changes
-	const $selectors = $('#projectSelect, #statusSelect, #epicSelect, #userStorySelect, #assignedToSelect, #sortSelect');
+	const filterSelectorString = Object.values(TTTaiga.Selectors.strings.filter).join(', ');
+	const $selectors = $(filterSelectorString);
 	$selectors.on('change', function () {
         if (window.TTTaiga && window.TTTaiga.isInitializing) return;
         
 		// When project changes, clear dependent Select2 dropdowns
 		if ($(this).attr('id') === 'projectSelect') {
-			$('#epicSelect, #userStorySelect').val(null).trigger('change.select2');
-			$('#statusSelect').val(null).trigger('change.select2');
-			$('#assignedToSelect').val(null).trigger('change.select2');
+			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.epic + ', ' + TTTaiga.Selectors.strings.filter.userStory).val(null).trigger('change.select2');
+			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.status).val(null).trigger('change.select2');
+			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.assignedTo).val(null).trigger('change.select2');
 		}
 
         // Update Global State with normalized filter keys
@@ -956,7 +1012,7 @@ function taigaBindFilters(onFilterChange) {
 	});
 
 	// Refresh button
-	$('#refreshBtn').on('click', function () {
+	TTTaiga.Selectors.$(TTTaiga.Selectors.strings.common.refreshBtn).on('click', function () {
 		onFilterChange(1);
 	});
 }
@@ -1415,30 +1471,34 @@ function taigaUpdateSelectionUI(total, filtered, selected, totalId, filteredId, 
 		selectionId = selectionId || 'selectedCount';
 
 		if (totalId) {
-			$('#' + totalId + '_simple').text(total);
-			$('#' + totalId).text(total);
+			var $totalSimple = TTTaiga.Selectors.$('#' + totalId + '_simple');
+			var $total = TTTaiga.Selectors.$('#' + totalId);
+			$totalSimple.text(total);
+			$total.text(total);
 		}
 		if (filteredId) {
-			$('#' + filteredId + '_simple').text(filtered);
-			$('#' + filteredId).text(filtered);
+			var $filteredSimple = TTTaiga.Selectors.$('#' + filteredId + '_simple');
+			var $filtered = TTTaiga.Selectors.$('#' + filteredId);
+			$filteredSimple.text(filtered);
+			$filtered.text(filtered);
 		}
 		if (selectionId) {
-			$('#' + selectionId).text(selected);
+			TTTaiga.Selectors.$('#' + selectionId).text(selected);
 		}
 
-		var $bulkBar = $('#bulkActionsBar');
+		var $bulkBar = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.bulkBar.container);
 		if ($bulkBar.length) {
 			$bulkBar.toggleClass('has-selection', selected > 0);
 		}
 
-		$('#clearSelectionBtn').prop('disabled', selected === 0);
+		TTTaiga.Selectors.$(TTTaiga.Selectors.strings.bulkBar.clearSelection).prop('disabled', selected === 0);
 		// Bulk Actions dropdown tetap enabled agar Bulk Create selalu accessible
 		if (typeof taigaUpdateBulkActionAvailability === 'function') {
 			taigaUpdateBulkActionAvailability(selected);
 		}
 
 		if (selected === 0) {
-			$('#masterCheckbox').prop('checked', false);
+			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.bulkBar.masterCheckbox).prop('checked', false);
 		}
 	} finally {
 		taigaUpdateLock = false;

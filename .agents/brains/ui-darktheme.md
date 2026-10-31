@@ -80,3 +80,55 @@ vendor/anovsiradj/web-skit/widgets/twbs/v5-dark-mode-toggle.html:
 - Memuat via `main_head.php` (CSS + JS) dan `main_navbar.php` (HTML)
 - `assets/theme.js` ada TAPI tidak dimuat oleh halaman apa pun (code mati)
 - Semua halaman pakai `data-bs-theme="auto"` di `<html>`
+
+---
+
+# Selector Grouping — Organisasi Id/Class Selector
+
+## Masalah
+Selector id/class tersebar sebagai string literal di seluruh file JS, dengan pola:
+- `$('#searchInput')` dipanggil berkali-kali di banyak fungsi
+- `$('#projectSelect'), $('#statusSelect'), ...` diulang di `taigaBindFilters()`
+- `$('#masterCheckbox'), $('#clearSelectionBtn')` diulang di `taigaUpdateSelectionUI()`
+- Tidak ada caching jQuery object → setiap `$()` melakukan pencarian DOM ulang
+
+## Solusi: TTTaiga.Selectors
+
+### Struktur
+Didefinisikan di `assets/taiga.js` sebagai objek dengan 3 grup:
+
+```javascript
+TTTaiga.Selectors = {
+    strings: {          // Selector string constants
+        filter: { search, project, status, epic, userStory, assignedTo, sort },
+        bulkBar: { container, masterCheckbox, clearSelection, dropdown, dropdownContainer },
+        common: { masterCheckbox, refreshBtn, logoutBtn }
+    },
+    cache: {},          // jQuery object cache
+    $(selector),        // Ambil cached jQuery object
+    resetCache()        — Bersihkan cache setelah DOM berubah
+}
+```
+
+### Penggunaan
+```javascript
+// Sebelum (string literal terulang)
+$('#searchInput').val()
+$('#projectSelect').val()
+$('#masterCheckbox').prop('checked', false)
+
+// Sesudah (grouped + cached)
+TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.search).val()
+TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val()
+TTTaiga.Selectors.$(TTTaiga.Selectors.strings.bulkBar.masterCheckbox).prop('checked', false)
+```
+
+### Manfaat
+1. **Satu sumber kebenaran** —ubah selector ID di satu tempat saja
+2. **Caching DOM** —jQuery object disimpan, tidak perlu pencarian DOM berulang
+3. **Mudah dibaca** —kelompokkan selector berdasarkan domain (filter, bulkBar, common)
+4. **Mudah dirawat** —semua selector terkait lokasi di satu objek
+
+### File yang Diubah untuk Selector Grouping
+- `assets/taiga.js` — definisi `TTTaiga.Selectors`, update `taigaGetFilterParams()`, `taigaBindFilters()`, `taigaUpdateSelectionUI()`, `taigaBulkSelectionCallback()`
+- `assets/app-tasks.js` — `$sel` object dengan cached selectors untuk content, pagination, checkbox, master, search, submit
