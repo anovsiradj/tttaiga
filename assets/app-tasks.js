@@ -88,15 +88,15 @@ $(document).ready(function () {
             html += '</div>';
             $sel.content.html(html);
             taigaBindSelectionLogic('task-checkbox', taigaBulkSelectionCallback, 'tasks');
-            $(sel.checkbox).each(function() {
+            $($sel.checkbox).each(function() {
                 var id = $(this).val();
                 if (TTTaiga.selectedItems.tasks.some(i => i.id == id)) {
                     $(this).prop('checked', true);
                     $(this).closest('.card').addClass('taiga-selected');
                 }
             });
-            var total = $(sel.checkbox).length;
-            var checked = $(sel.checkbox + ':checked').length;
+            var total = $($sel.checkbox).length;
+            var checked = $($sel.checkbox + ':checked').length;
             $sel.master.prop('checked', total > 0 && checked === total);
         },
         populateBulkCreateDropdowns: function() {
