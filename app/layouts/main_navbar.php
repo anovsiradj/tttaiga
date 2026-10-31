@@ -2,17 +2,19 @@
 $currentPage = basename($_SERVER['PHP_SELF'] ?? '');
 $navItems = [
 	'index.php' => 'Me',
-	'projects.php' => 'Project',
+	'proyeks.php' => 'Proyek',
 	'sprints.php' => 'Sprint',
+	'sprint_plan_form.php' => 'Sprint Planning',
 	'epiks.php' => 'Epik',
 	'usors.php' => 'Usor',
 	'tasks.php' => 'Task',
 	'isus.php' => 'Isu',
 ];
-// Detail pages (project.php, sprint.php, ...) highlight their list nav item.
+// Detail pages (proyek.php, sprint.php, ...) highlight their list nav item.
 $detailToList = [
-	'project.php' => 'projects.php',
+	'proyek.php' => 'proyeks.php',
 	'sprint.php' => 'sprints.php',
+	'sprint_plan_form.php' => 'sprint_plan_form.php',
 	'epik.php' => 'epiks.php',
 	'usor.php' => 'usors.php',
 	'task.php' => 'tasks.php',

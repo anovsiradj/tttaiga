@@ -27,10 +27,13 @@ final class WebIntegrationTest extends TestCase
 
 	public function testProtectedPageRedirectsToLoginWithoutSession(): void
 	{
-		$response = self::request('GET', 'projects.php');
+		$response = self::request('GET', 'proyeks.php');
 
 		self::assertSame(302, $response['status']);
-		self::assertSame('login.php', self::header($response, 'Location'));
+		self::assertMatchesRegularExpression(
+			'/^login\.php\?redirect=/',
+			(string) self::header($response, 'Location')
+		);
 	}
 
 	public function testApiProxyRejectsRequestWithoutSessionBeforeUpstreamCall(): void
@@ -104,13 +107,13 @@ final class WebIntegrationTest extends TestCase
 		$cookie = self::sessionCookie($login);
 		self::assertNotNull($cookie, 'Login response did not create a PHP session cookie.');
 
-		$protectedPage = self::request('GET', 'projects.php', headers: [
+		$protectedPage = self::request('GET', 'proyeks.php', headers: [
 			"Cookie: {$cookie}",
 		]);
 
 		self::assertSame(200, $protectedPage['status']);
 		self::assertStringContainsString(
-			'<title>Projek - TTTaiga</title>',
+			'<title>Proyek - TTTaiga</title>',
 			$protectedPage['body']
 		);
 
@@ -127,12 +130,15 @@ final class WebIntegrationTest extends TestCase
 			json_decode($logout['body'], true, flags: JSON_THROW_ON_ERROR)
 		);
 
-		$afterLogout = self::request('GET', 'projects.php', headers: [
+		$afterLogout = self::request('GET', 'proyeks.php', headers: [
 			"Cookie: {$cookie}",
 		]);
 
 		self::assertSame(302, $afterLogout['status']);
-		self::assertSame('login.php', self::header($afterLogout, 'Location'));
+		self::assertMatchesRegularExpression(
+			'/^login\.php\?redirect=/',
+			(string) self::header($afterLogout, 'Location')
+		);
 	}
 
 	public function testApiPreflightReturnsProxyCorsContract(): void

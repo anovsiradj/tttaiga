@@ -283,7 +283,7 @@ require __DIR__ . '/app/init.php';
 				let html = '<div class="d-grid gap-2">';
 
 				if (task.project_extra_info) {
-					html += `<a class="btn btn-outline-primary btn-sm" href="project.php?id=${encodeURIComponent(task.project)}">View Project Details</a>`;
+					html += `<a class="btn btn-outline-primary btn-sm" href="proyek.php?id=${encodeURIComponent(task.project)}">View Proyek Details</a>`;
 				}
 
 				if (task.user_story_extra_info) {

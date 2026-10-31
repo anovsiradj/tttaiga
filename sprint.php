@@ -152,6 +152,13 @@ require __DIR__ . '/app/init.php';
 							}
 						};
 
+						// Add planning button to header
+						$('#sprintHeaderContent .mt-3').append(`
+							<a class="btn btn-outline-light btn-sm ms-2" href="sprint_plan_form.php?id=${sprint.id}" title="Sprint Planning">
+								<i class="bi bi-kanban me-1"></i> Planning
+							</a>
+						`);
+
 						const directProjectSlug = sprint.project_extra && sprint.project_extra.slug ? sprint.project_extra.slug : null;
 						if (directProjectSlug) {
 							renderTaigaLink(directProjectSlug);

@@ -26,9 +26,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('protected page redirects unauthenticated users to login', async ({ page }) => {
-	await page.goto('projects.php');
+	await page.goto('proyeks.php');
 
-	await expect(page).toHaveURL(/\/login\.php$/);
+	await expect(page).toHaveURL(/\/login\.php(\?|$)/);
 	await expect(page).toHaveTitle('Login - TTTaiga');
 	await expect(page.getByText('TTTaiga', { exact: true })).toBeVisible();
 });
@@ -99,12 +99,12 @@ test('successful authentication creates a PHP session and opens projects', async
 	await page.getByLabel('Password').fill('valid-browser-test-password');
 	await page.getByRole('button', { name: 'SIGN IN' }).click();
 
-	await expect(page).toHaveURL(/\/projects\.php$/);
-	await expect(page).toHaveTitle('Projek - TTTaiga');
+	await expect(page).toHaveURL(/\/proyeks\.php$/);
+	await expect(page).toHaveTitle('Proyek - TTTaiga');
 	await expect
 		.poll(() => page.context().cookies().then(cs => cs.some(c => c.name === 'PHPSESSID')))
 		.toBe(true);
 
-	await page.goto('projects.php');
-	await expect(page).toHaveURL(/\/projects\.php$/);
+	await page.goto('proyeks.php');
+	await expect(page).toHaveURL(/\/proyeks\.php$/);
 });

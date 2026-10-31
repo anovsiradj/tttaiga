@@ -33,3 +33,11 @@ GOAL: develop web-skit as JS/jQuery + Bootstrap 5 widget library alongside tttai
 - `php84` untuk PHP CLI
 - `php84c` untuk composer
 - Apache local server, URL dari `APP_URL` di `.env`
+
+## Debug & Test Data Boundary (AGENTS.md, non-negotiable)
+
+- HANYA epic/sprint/usor/task/isu di proyek **TTTaiga (ID: 107)** yang boleh disentuh untuk debug/test.
+- DILARANG menyentuh proyek lain (91, 146, dst.) — read-only pun untuk mutasi.
+- DILARANG hapus data tanpa izin eksplisit user.
+- Login live: `DEBUG_USERNAME`/`DEBUG_PASSWORD` di `.env`, proxy `api.php` (session PHP).
+

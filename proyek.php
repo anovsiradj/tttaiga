@@ -14,10 +14,10 @@ require __DIR__ . '/app/init.php';
 	<?php include __DIR__ . '/app/layouts/main_navbar.php' ?>
 
 	<?php
-	$backUrl = 'projects.php';
-	$backLabel = 'Back to Projects';
-	$headerId = 'projectHeaderContent';
-	$loadingLabel = 'Loading project...';
+	$backUrl = 'proyeks.php';
+	$backLabel = 'Back to Proyeks';
+	$headerId = 'proyekHeaderContent';
+	$loadingLabel = 'Loading proyek...';
 	include __DIR__ . '/app/partials/item_header.php';
 	?>
 
@@ -26,9 +26,9 @@ require __DIR__ . '/app/init.php';
 			<div class="col-md-8">
 				<div class="card mb-4">
 					<div class="card-header">
-						<h5 class="mb-0">Project Details</h5>
+						<h5 class="mb-0">Proyek Details</h5>
 					</div>
-					<div class="card-body" id="projectDetailsContent">
+					<div class="card-body" id="proyekDetailsContent">
 						<div class="loading-spinner">
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden">Loading details...</span>
@@ -41,7 +41,7 @@ require __DIR__ . '/app/init.php';
 					<div class="card-header">
 						<h5 class="mb-0">Description</h5>
 					</div>
-					<div class="card-body" id="projectDescriptionContent">
+					<div class="card-body" id="proyekDescriptionContent">
 						<div class="loading-spinner">
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden">Loading description...</span>
@@ -54,7 +54,7 @@ require __DIR__ . '/app/init.php';
 					<div class="card-header">
 						<h5 class="mb-0">Komentar</h5>
 					</div>
-					<div class="card-body" id="projectCommentsContent">
+					<div class="card-body" id="proyekCommentsContent">
 						<div class="loading-spinner">
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden">Loading comments...</span>
@@ -67,9 +67,9 @@ require __DIR__ . '/app/init.php';
 			<div class="col-md-4">
 				<div class="card mb-4">
 					<div class="card-header">
-						<h5 class="mb-0">Project Stats</h5>
+						<h5 class="mb-0">Proyek Stats</h5>
 					</div>
-					<div class="card-body" id="projectStatsContent">
+					<div class="card-body" id="proyekStatsContent">
 						<div class="loading-spinner">
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden">Loading stats...</span>
@@ -82,7 +82,7 @@ require __DIR__ . '/app/init.php';
 					<div class="card-header">
 						<h5 class="mb-0">Team Members</h5>
 					</div>
-					<div class="card-body" id="projectMembersContent">
+					<div class="card-body" id="proyekMembersContent">
 						<div class="loading-spinner">
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden">Loading members...</span>
@@ -113,52 +113,52 @@ require __DIR__ . '/app/init.php';
 			const config = <?php echo json_encode(include 'app/configs/taiga.php'); ?>;
 			const apiUrl = session.apiUrl || config.servers.default.api_url;
 
-			// Get project ID from URL
+			// Get proyek ID from URL
 			const urlParams = new URLSearchParams(window.location.search);
-			const projectId = urlParams.get('id');
+			const proyekId = urlParams.get('id');
 
-			if (!projectId) {
-				window.location.href = 'projects.php';
+			if (!proyekId) {
+				window.location.href = 'proyeks.php';
 				return;
 			}
 
-			taigaLoadComments('#projectCommentsContent', 'project', projectId, apiUrl, token);
+			taigaLoadComments('#proyekCommentsContent', 'project', proyekId, apiUrl, token);
 
-			// Load project data
-			loadProjectData(projectId);
+			// Load proyek data
+			loadProyekData(proyekId);
 
-			function loadProjectData(projectId) {
-				// Load project basic info
+			function loadProyekData(proyekId) {
+				// Load proyek basic info
 				$.ajax({
-					url: 'api.php/projects/' + projectId,
+					url: 'api.php/projects/' + proyekId,
 					type: 'GET',
 					headers: {
 						'Authorization': 'Bearer ' + token,
 						'Content-Type': 'application/json',
 						'X-Taiga-Api-Url': apiUrl
 					},
-					success: function (project) {
-						displayProjectHeader(project);
-						displayProjectDetails(project);
-						displayProjectDescription(project);
+					success: function (proyek) {
+						displayProyekHeader(proyek);
+						displayProyekDetails(proyek);
+						displayProyekDescription(proyek);
 
 						// Load additional data
-						loadProjectStats(projectId);
-						loadProjectMembers(projectId);
+						loadProyekStats(proyekId);
+						loadProyekMembers(proyekId);
 					},
 					error: function (xhr) {
-						console.error('Failed to load project:', xhr);
-						$('#projectHeaderContent').html(`
+						console.error('Failed to load proyek:', xhr);
+						$('#proyekHeaderContent').html(`
 					<div class="alert alert-danger">
-						Failed to load project. Please check if you have access to this project.
-						<a href="projects.php" class="btn btn-sm btn-outline-danger ms-2">Back to Projects</a>
+						Failed to load proyek. Please check if you have access to this proyek.
+						<a href="proyeks.php" class="btn btn-sm btn-outline-danger ms-2">Back to Proyeks</a>
 					</div>
 				`);
 					}
 				});
 			}
 
-			function loadProjectStats(projectId) {
+			function loadProyekStats(proyekId) {
 				// This would typically include user stories, tasks, etc.
 				// For now, we'll show basic stats
 				const statsHtml = `
@@ -183,14 +183,14 @@ require __DIR__ . '/app/init.php';
 				</div>
 			</div>
 		`;
-				$('#projectStatsContent').html(statsHtml);
+				$('#proyekStatsContent').html(statsHtml);
 			}
 
-			function loadProjectMembers(projectId) {
-				// Load project members
+			function loadProyekMembers(proyekId) {
+				// Load proyek members
 				$.ajax({
 					url: 'api.php/memberships',
-					data: { project: projectId },
+					data: { project: proyekId },
 					type: 'GET',
 					headers: {
 						'Authorization': 'Bearer ' + token,
@@ -198,11 +198,11 @@ require __DIR__ . '/app/init.php';
 						'X-Taiga-Api-Url': apiUrl
 					},
 					success: function (members) {
-						displayProjectMembers(members);
+						displayProyekMembers(members);
 					},
 					error: function (xhr) {
 						console.error('Failed to load members:', xhr);
-						$('#projectMembersContent').html(`
+						$('#proyekMembersContent').html(`
 					<div class="alert alert-warning">
 						Unable to load team members.
 					</div>
@@ -211,65 +211,65 @@ require __DIR__ . '/app/init.php';
 				});
 			}
 
-			function displayProjectHeader(project) {
+			function displayProyekHeader(proyek) {
 				const headerHtml = `
 			<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
 				<div class="me-3">
-					<h1 class="display-4 mb-2">${project.name}</h1>
-					<p class="lead mb-0">${project.slug}</p>
-					<span class="badge bg-${project.is_private ? 'secondary' : 'primary'} mt-2">
-						${project.is_private ? 'Private Project' : 'Public Project'}
+					<h1 class="display-4 mb-2">${proyek.name}</h1>
+					<p class="lead mb-0">${proyek.slug}</p>
+					<span class="badge bg-${proyek.is_private ? 'secondary' : 'primary'} mt-2">
+						${proyek.is_private ? 'Private Proyek' : 'Public Proyek'}
 					</span>
 				</div>
 				<div class="mt-3 mt-md-0">
-					<a class="btn btn-light btn-sm d-none" id="projectTaigaLinkBtn" href="#" target="_blank" rel="noopener">Open in Taiga</a>
+					<a class="btn btn-light btn-sm d-none" id="proyekTaigaLinkBtn" href="#" target="_blank" rel="noopener">Open in Taiga</a>
 				</div>
 			</div>
 		`;
-				$('#projectHeaderContent').html(headerHtml);
+				$('#proyekHeaderContent').html(headerHtml);
 
-				const taigaLink = taigaItemPermalink('project', project, apiUrl);
+				const taigaLink = taigaItemPermalink('project', proyek, apiUrl);
 				if (taigaLink) {
-					$('#projectTaigaLinkBtn').removeClass('d-none').attr('href', taigaLink);
+					$('#proyekTaigaLinkBtn').removeClass('d-none').attr('href', taigaLink);
 				}
 			}
 
-			function displayProjectDetails(project) {
+			function displayProyekDetails(proyek) {
 				const detailsHtml = `
 			<div class="row">
 				<div class="col-6">
 					<strong>Created:</strong><br>
-					${new Date(project.created_date).toLocaleDateString()}
+					${new Date(proyek.created_date).toLocaleDateString()}
 				</div>
 				<div class="col-6">
 					<strong>Modified:</strong><br>
-					${new Date(project.modified_date).toLocaleDateString()}
+					${new Date(proyek.modified_date).toLocaleDateString()}
 				</div>
 				<div class="col-6 mt-3">
 					<strong>Total Members:</strong><br>
-					${project.total_memberships || 0}
+					${proyek.total_memberships || 0}
 				</div>
 				<div class="col-6 mt-3">
 					<strong>Total Milestones:</strong><br>
-					${project.total_milestones || 0}
+					${proyek.total_milestones || 0}
 				</div>
 				<div class="col-12 mt-3">
-					<strong>Project ID:</strong><br>
-					<code>${project.id}</code>
+					<strong>Proyek ID:</strong><br>
+					<code>${proyek.id}</code>
 				</div>
 			</div>
 		`;
-				$('#projectDetailsContent').html(detailsHtml);
+				$('#proyekDetailsContent').html(detailsHtml);
 			}
 
-			function displayProjectDescription(project) {
-				const html = taigaRenderContent(project.description);
-				$('#projectDescriptionContent').html(html);
+			function displayProyekDescription(proyek) {
+				const html = taigaRenderContent(proyek.description);
+				$('#proyekDescriptionContent').html(html);
 			}
 
-			function displayProjectMembers(members) {
+			function displayProyekMembers(members) {
 				if (members.length === 0) {
-					$('#projectMembersContent').html(`
+					$('#proyekMembersContent').html(`
 				<p class="text-muted">No team members found.</p>
 			`);
 					return;
@@ -293,7 +293,7 @@ require __DIR__ . '/app/init.php';
 			`;
 				});
 
-				$('#projectMembersContent').html(html);
+				$('#proyekMembersContent').html(html);
 			}
 		});
 	</script>

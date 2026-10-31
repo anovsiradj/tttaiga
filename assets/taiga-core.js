@@ -275,7 +275,7 @@ window.TTTaiga = { ...window.TTTaiga,
 // --- Shared Filter Logic (extracted from app.js) ---
 
 const TTTTAIGA_SHARED_FILTER_KEYS = ['q', 'project', 'status', 'epic', 'user_story', 'assigned_to', 'milestone', 'order_by'];
-const TTTTAIGA_SHARED_FILTER_MODULES = new Set(['projects.php', 'sprints.php', 'epiks.php', 'usors.php', 'tasks.php', 'isus.php']);
+const TTTTAIGA_SHARED_FILTER_MODULES = new Set(['proyeks.php', 'sprints.php', 'sprint_plan_form.php', 'epiks.php', 'usors.php', 'tasks.php', 'isus.php']);
 const TTTTAIGA_SHARED_FILTER_STORAGE_KEY = 'tttaiga_shared_filters';
 
 function tttaigaCurrentPageName() {

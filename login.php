@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 $pageTitle = 'Login';
-$redirect = $_GET['redirect'] ?? 'projects.php';
+$redirect = $_GET['redirect'] ?? 'proyeks.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="auto">

@@ -2,13 +2,11 @@
 
 require __DIR__ . '/app/init.php';
 
-$pageTitle = 'Projek';
-$searchPlaceholder = 'Search projects...';
-$primaryAction = '<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#singleProjectModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
+$pageTitle = 'Proyek';
+$searchPlaceholder = 'Search proyeks...';
+$primaryAction = ''; // No create action for Proyek
 $bulkActions = '
-	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateProjectModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
-	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateProjectModal"><i class="bi bi-pencil-square me-2"></i> Bulk Prefix</a></li>
-	<li><a class="dropdown-item text-danger tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkDeleteProjectModal"><i class="bi bi-trash me-2"></i> Bulk Delete</a></li>
+	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateProyekModal"><i class="bi bi-pencil-square me-2"></i> Bulk Prefix</a></li>
 ';
 
 $sortOptions = [
@@ -43,23 +41,23 @@ $filterStatusEnable = false;
 		<?php include __DIR__ . '/app/partials/list_header.php' ?>
 
 		<?php
-		$totalLabel = 'Total Projects';
-		$totalId = 'totalProjects';
-		$filteredId = 'filteredProjects';
-		$selectionCountId = 'selectedProjectsCount';
+		$totalLabel = 'Total Proyeks';
+		$totalId = 'totalProyeks';
+		$filteredId = 'filteredProyeks';
+		$selectionCountId = 'selectedProyeksCount';
 		include __DIR__ . '/app/partials/list_status.php';
 		?>
 
-		<div id="projectsContent">
+		<div id="proyeksContent">
 			<div class="loading-spinner">
 				<div class="spinner-border text-primary" role="status">
-					<span class="visually-hidden">Loading projects...</span>
+					<span class="visually-hidden">Loading proyeks...</span>
 				</div>
 			</div>
 		</div>
 
-		<nav aria-label="Projects pagination" class="mt-4">
-			<ul class="pagination justify-content-center" id="projectsPagination">
+		<nav aria-label="Proyeks pagination" class="mt-4">
+			<ul class="pagination justify-content-center" id="proyeksPagination">
 				<!-- Pagination items will be injected here -->
 			</ul>
 		</nav>
@@ -76,12 +74,10 @@ $filterStatusEnable = false;
     
     <!-- New Architecture -->
     <script src="assets/taiga-core.js?v=<?php echo filemtime(__DIR__ . '/assets/taiga-core.js'); ?>"></script>
-    <script src="assets/app-projects.js?v=<?php echo filemtime(__DIR__ . '/assets/app-projects.js'); ?>"></script>
+    <script src="assets/app-proyeks.js?v=<?php echo filemtime(__DIR__ . '/assets/app-proyeks.js'); ?>"></script>
 
 
-	<?php include __DIR__ . '/app/partials/project_multiple_form.php'; ?>
-<?php include __DIR__ . '/app/partials/project_multiple_delete.php'; ?>
-<?php include __DIR__ . '/app/partials/project_single_form.php'; ?>
+	<?php include __DIR__ . '/app/partials/proyek_multiple_form.php'; ?>
 
 </body>
 
