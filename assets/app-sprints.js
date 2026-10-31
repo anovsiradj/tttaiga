@@ -98,7 +98,7 @@ $(document).ready(function () {
 
             const $btn = $('#submitBulkCreateSprints');
             $btn.prop('disabled', true).text('Creating...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             const sprints = taigaParseBulkLines(text);
             const defaultStart = $('#bulkCreateSprintStart').val();
@@ -124,7 +124,7 @@ $(document).ready(function () {
             function checkFinished() {
                 if (createdCount + errorCount === sprints.length) {
                     $btn.prop('disabled', false).text('Create Sprints');
-                    $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                    $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                     TTTaiga.UI.notify(`Created ${createdCount} sprints, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) { $('#bulkCreateSprintModal').modal('hide'); TTTaiga.Sprints.load(); }
                 }
@@ -148,11 +148,11 @@ $(document).ready(function () {
 
             const $btn = $('#submitBulkUpdateSprint');
             $btn.prop('disabled', true).text('Updating...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             taigaExecuteBulkParallel('/milestones/', selectedSprints, 'PATCH', updateData, (successCount, errorCount) => {
                 $btn.prop('disabled', false).text('Update Sprints');
-                $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Updated ${successCount} sprints, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                 if (errorCount === 0) { $('#bulkUpdateSprintModal').modal('hide'); TTTaiga.Sprints.load(); }
             }, { showProgress: true });
@@ -178,11 +178,11 @@ $(document).ready(function () {
 
             const $btn = $('#confirmBulkDeleteSprints');
             $btn.prop('disabled', true).text('Deleting...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             taigaExecuteBulkParallel('/milestones/', selectedSprints, 'DELETE', null, (successCount, errorCount) => {
                 $btn.prop('disabled', false).text('Delete Sprints');
-                $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} sprints, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                 if (errorCount === 0) { $('#bulkDeleteSprintModal').modal('hide'); TTTaiga.Sprints.load(); }
             }, { showProgress: true });

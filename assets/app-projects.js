@@ -72,7 +72,7 @@ $(document).ready(function () {
 
             const $btn = $('#submitBulkCreateProjects');
             $btn.prop('disabled', true).text('Creating...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             const projects = taigaParseBulkLines(text);
             let createdCount = 0; let errorCount = 0;
@@ -87,7 +87,7 @@ $(document).ready(function () {
             function checkFinished() {
                 if (createdCount + errorCount === projects.length) {
                     $btn.prop('disabled', false).text('Create Projects');
-                    $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                    $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                     TTTaiga.UI.notify(`Created ${createdCount} projects, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) { $('#bulkCreateProjectModal').modal('hide'); TTTaiga.Projects.load(); }
                 }
@@ -104,11 +104,11 @@ $(document).ready(function () {
 
             const $btn = $('#confirmBulkDeleteProjects');
             $btn.prop('disabled', true).text('Deleting...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             taigaExecuteBulkParallel('/projects/', selectedProjects, 'DELETE', null, (successCount, errorCount) => {
                 $btn.prop('disabled', false).text('Delete Projects');
-                $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} projects, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                 if (errorCount === 0) {
                     $('#bulkDeleteProjectModal').modal('hide');

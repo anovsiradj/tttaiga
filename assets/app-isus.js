@@ -102,7 +102,7 @@ $(document).ready(function () {
 
             const $btn = $('#submitBulkCreateIssues');
             $btn.prop('disabled', true).text('Creating...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             const items = taigaParseBulkLines(text);
             let createdCount = 0; let errorCount = 0;
@@ -123,7 +123,7 @@ $(document).ready(function () {
             function checkFinished() {
                 if (createdCount + errorCount === items.length) {
                     $btn.prop('disabled', false).text('Create Isus');
-                    $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                    $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                     TTTaiga.UI.notify(`Created ${createdCount} isus, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) {
                         $('#issueBulkCreateModal').modal('hide');
@@ -143,11 +143,11 @@ $(document).ready(function () {
 
             const $btn = $('#confirmBulkDeleteIssues');
             $btn.prop('disabled', true).text('Deleting...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             taigaExecuteBulkParallel('/issues/', selectedIssues, 'DELETE', null, (successCount, errorCount) => {
                 $btn.prop('disabled', false).text('Delete Isus');
-                $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} isus, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                 if (errorCount === 0) { $('#issueBulkDeleteModal').modal('hide'); TTTaiga.Issues.load(); }
             }, { showProgress: true });

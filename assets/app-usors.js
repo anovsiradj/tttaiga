@@ -111,7 +111,7 @@ $(document).ready(function () {
 
             const $btn = $('#submitBulkCreate');
             $btn.prop('disabled', true).text('Creating...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             const stories = text.split('\n').filter(line => line.trim()).map(line => {
                 const parts = line.split('|');
@@ -140,7 +140,7 @@ $(document).ready(function () {
             function checkFinished() {
                 if (createdCount + errorCount === stories.length) {
                     $btn.prop('disabled', false).text('Create Stories');
-                    $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                    $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                     TTTaiga.UI.notify(`Created ${createdCount} usors, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) {
                         $('#bulkCreateModal').modal('hide');
@@ -163,11 +163,11 @@ $(document).ready(function () {
 
             const $btn = $('#confirmBulkDelete');
             $btn.prop('disabled', true).text('Deleting...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             taigaExecuteBulkParallel('/userstories/', selectedUsors, 'DELETE', null, (successCount, errorCount) => {
                 $btn.prop('disabled', false).text('Delete Usors');
-                $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} usors, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                 if (errorCount === 0) {
                     $('#bulkDeleteModal').modal('hide');

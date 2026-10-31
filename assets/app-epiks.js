@@ -107,7 +107,7 @@ $(document).ready(function () {
 
             const $btn = $('#submitBulkCreateEpic');
             $btn.prop('disabled', true).text('Creating...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             const epics = taigaParseBulkLines(text);
             let createdCount = 0; let errorCount = 0;
@@ -128,7 +128,7 @@ $(document).ready(function () {
             function checkFinished() {
                 if (createdCount + errorCount === epics.length) {
                     $btn.prop('disabled', false).text('Create Epiks');
-                    $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                    $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                     TTTaiga.UI.notify(`Created ${createdCount} epiks, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) {
                         $('#bulkCreateEpicModal').modal('hide');
@@ -148,11 +148,11 @@ $(document).ready(function () {
 
             const $btn = $('#confirmBulkDeleteEpics');
             $btn.prop('disabled', true).text('Deleting...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             taigaExecuteBulkParallel('/epics/', selectedEpics, 'DELETE', null, (successCount, errorCount) => {
                 $btn.prop('disabled', false).text('Delete Epiks');
-                $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} epiks, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                 if (errorCount === 0) { $('#bulkDeleteEpicModal').modal('hide'); TTTaiga.Epiks.load(); }
             }, { showProgress: true });

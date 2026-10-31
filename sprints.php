@@ -31,11 +31,18 @@ require __DIR__ . '/app/init.php';
 			'estimated_finish' => 'Finish Date (ASC)',
 			'-estimated_finish' => 'Finish Date (DESC)',
 		];
-		$primaryAction = '<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#singleSprintModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
-$bulkActions = '
-			<li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateSprintModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
-			<li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateSprintModal"><i class="bi bi-pencil-square me-2"></i> Bulk Update</a></li>
-			<li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#bulkDeleteSprintModal"><i class="bi bi-trash me-2"></i> Bulk Delete</a></li>
+		$primaryAction = '<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#singleSprintModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
+		$additionalControls = '
+		<div class="col-md-auto">
+			<a class="btn btn-outline-primary tttaiga-bulk-handle" href="sprint_plan_form.php" title="Sprint Planning">
+				<i class="bi bi-kanban me-1"></i> Planning
+			</a>
+		</div>
+	';
+		$bulkActions = '
+			<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateSprintModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
+			<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateSprintModal"><i class="bi bi-pencil-square me-2"></i> Bulk Update</a></li>
+			<li><a class="dropdown-item text-danger tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkDeleteSprintModal"><i class="bi bi-trash me-2"></i> Bulk Delete</a></li>
 		';
 		include __DIR__ . '/app/partials/list_header.php';
 		?>
@@ -70,7 +77,6 @@ $bulkActions = '
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 	<script src="assets/taiga.js?v=<?php echo filemtime(__DIR__ . '/assets/taiga.js'); ?>"></script>
-    
     <!-- New Architecture -->
     <script src="assets/taiga-core.js?v=<?php echo filemtime(__DIR__ . '/assets/taiga-core.js'); ?>"></script>
     <script src="assets/app-sprints.js?v=<?php echo filemtime(__DIR__ . '/assets/app-sprints.js'); ?>"></script>

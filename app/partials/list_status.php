@@ -34,14 +34,14 @@ $selectionCountId ??= 'selectedCount';
 		</div>
 
 		<div class="d-flex align-items-center">
-			<button class="btn btn-sm btn-outline-secondary me-3" id="clearSelectionBtn" disabled>
+			<button class="btn btn-sm btn-outline-secondary me-3 tttaiga-bulk-handle" id="clearSelectionBtn" disabled>
 				Clear
 			</button>
 
 			<div id="bulkActionsDropdownContainer">
 				<?php if (isset($bulkActions)): ?>
 					<div class="dropdown">
-						<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+						<button class="btn btn-primary btn-sm dropdown-toggle tttaiga-bulk-handle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
 							<i class="bi bi-gear-fill me-1"></i> Bulk Actions
 						</button>
 						<ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bulkActionsDropdown">

@@ -11,8 +11,8 @@
 				<div id="selectedIssuesList" class="small text-muted mb-3"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-danger" id="confirmBulkDeleteIssues">Delete Isus</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-danger tttaiga-bulk-handle" id="confirmBulkDeleteIssues">Delete Isus</button>
 			</div>
 		</div>
 	</div>

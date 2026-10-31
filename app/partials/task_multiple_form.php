@@ -59,9 +59,9 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-info" id="previewBulkTaskCreate">Preview</button>
-				<button type="button" class="btn btn-success" id="submitBulkTaskCreate">Create Tasks</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-info tttaiga-bulk-handle" id="previewBulkTaskCreate">Preview</button>
+				<button type="button" class="btn btn-success tttaiga-bulk-handle" id="submitBulkTaskCreate">Create Tasks</button>
 			</div>
 		</div>
 	</div>
@@ -137,8 +137,8 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-primary" id="submitBulkTaskUpdate">Update Tasks</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary tttaiga-bulk-handle" id="submitBulkTaskUpdate">Update Tasks</button>
 			</div>
 		</div>
 	</div>

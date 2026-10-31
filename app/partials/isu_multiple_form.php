@@ -29,9 +29,9 @@
 				<div id="bulkCreateIssuePreview" class="border rounded p-2 bg-body-tertiary d-none"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-outline-primary" id="previewBulkCreateIssues">Preview</button>
-				<button type="button" class="btn btn-success" id="submitBulkCreateIssues">Create Isus</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-outline-primary tttaiga-bulk-handle" id="previewBulkCreateIssues">Preview</button>
+				<button type="button" class="btn btn-success tttaiga-bulk-handle" id="submitBulkCreateIssues">Create Isus</button>
 			</div>
 		</div>
 	</div>
@@ -98,8 +98,8 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-primary" id="submitBulkIssueUpdate">Update Isus</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary tttaiga-bulk-handle" id="submitBulkIssueUpdate">Update Isus</button>
 			</div>
 		</div>
 	</div>

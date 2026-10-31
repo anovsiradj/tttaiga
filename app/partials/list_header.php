@@ -27,14 +27,14 @@ $hasFilters = $filterProjectEnable
 		<?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?>
 	</h1>
 	<div class="d-flex align-items-center">
-		<button class="btn btn-outline-secondary btn-sm me-2" id="refreshBtn" title="Refresh">
+		<button class="btn btn-outline-secondary btn-sm me-2 tttaiga-bulk-handle" id="refreshBtn" title="Refresh">
 			<i class="bi bi-arrow-clockwise"></i>
 		</button>
 
 		<?php if (isset($primaryAction)) { ?>
 			<?= $primaryAction ?>
 		<?php } elseif (isset($bulkCreateModalId)) { ?>
-			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<?php echo htmlspecialchars($bulkCreateModalId, ENT_QUOTES, 'UTF-8'); ?>">
+			<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#<?php echo htmlspecialchars($bulkCreateModalId, ENT_QUOTES, 'UTF-8'); ?>">
 				<i class="bi bi-plus-lg me-1"></i>
 				Add New
 			</button>

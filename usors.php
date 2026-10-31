@@ -38,11 +38,11 @@ require __DIR__ . '/app/init.php';
 			'sprint_order' => 'Sprint Order (ASC)',
 			'-sprint_order' => 'Sprint Order (DESC)',
 		];
-		$primaryAction = '<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#singleUsorModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
+		$primaryAction = '<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#singleUsorModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
 $bulkActions = '
-	<li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
-	<li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateModal"><i class="bi bi-pencil-square me-2"></i> Bulk Update</a></li>
-	<li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#bulkDeleteModal"><i class="bi bi-trash me-2"></i> Bulk Delete</a></li>
+	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
+	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateModal"><i class="bi bi-pencil-square me-2"></i> Bulk Update</a></li>
+	<li><a class="dropdown-item text-danger tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkDeleteModal"><i class="bi bi-trash me-2"></i> Bulk Delete</a></li>
 ';
 		include __DIR__ . '/app/partials/list_header.php';
 

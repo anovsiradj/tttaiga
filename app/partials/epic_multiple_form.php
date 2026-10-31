@@ -48,9 +48,9 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-outline-primary" id="previewBulkCreateEpic">Preview</button>
-				<button type="button" class="btn btn-success" id="submitBulkCreateEpic">Create Epiks</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-outline-primary tttaiga-bulk-handle" id="previewBulkCreateEpic">Preview</button>
+				<button type="button" class="btn btn-success tttaiga-bulk-handle" id="submitBulkCreateEpic">Create Epiks</button>
 			</div>
 		</div>
 	</div>
@@ -121,8 +121,8 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-primary" id="submitBulkUpdateEpic">Update Epiks</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary tttaiga-bulk-handle" id="submitBulkUpdateEpic">Update Epiks</button>
 			</div>
 		</div>
 	</div>

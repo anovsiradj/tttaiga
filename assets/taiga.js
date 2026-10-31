@@ -217,7 +217,7 @@ TTTaiga.BulkUpdate = {
                 var $btn = $modal.find('#submitBulkUpdate, #submitBulkTaskUpdate, #submitBulkUpdateEpic, #submitBulkIssueUpdate, #submitBulkUpdateSprint, #submitBulkProjectUpdate');
                 if (!$btn.length) $btn = $modal.find('.btn-primary[data-action="submit"]');
         $btn.prop('disabled', true).text('Updating...');
-        $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+        $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
         var dataFn = updateData;
         if (type === 'projects' && prefix) {
@@ -229,7 +229,7 @@ TTTaiga.BulkUpdate = {
 
         taigaExecuteBulkParallel(cfg.endpoint, items, 'PATCH', dataFn, function(successCount, errorCount) {
             $btn.prop('disabled', false).text('Update ' + cfg.label);
-            $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
             if (errorCount === 0) {
                 TTTaiga.UI.notify('Successfully updated ' + successCount + ' ' + cfg.label.toLowerCase() + '!', 'success');
                 $modal.modal('hide');
@@ -1457,11 +1457,15 @@ function taigaBulkActionRequiresSelection($item) {
 function taigaUpdateBulkActionAvailability(selected) {
 	const hasSelection = selected > 0;
 	// Find dropdown items in common containers
-	const $items = $('#bulkActionsDropdownContainer .dropdown-item, #bulkActionsDropdown .dropdown-item, .bulk-actions-dropdown .dropdown-item, [data-bulk-actions] .dropdown-item, .dropdown-menu .dropdown-item');
+	const $items = $('#bulkActionsDropdownContainer .tttaiga-bulk-action, #bulkActionsDropdown .tttaiga-bulk-action, .bulk-actions-dropdown .tttaiga-bulk-action, [data-bulk-actions] .tttaiga-bulk-action');
 	// Also find the dropdown toggle button
 
 	$items.each(function () {
 		const $item = $(this);
+		// Skip theme toggle items (light/dark/auto) — must never be disabled
+		if ($item.attr('data-bs-theme-value')) {
+			return;
+		}
 		// Skip items that don't require selection (like create)
 		if (!taigaBulkActionRequiresSelection($item)) {
 			$item.removeClass('disabled').attr('aria-disabled', 'false');
@@ -1514,7 +1518,7 @@ function taigaBindSelectionLogic(itemCheckboxClass, onSelectionChange, type) {
 
 	taigaUpdateBulkActionAvailability(0);
 
-	$(document).off('click.bulkAvailability', '#bulkActionsDropdownContainer .dropdown-item.disabled').on('click.bulkAvailability', '#bulkActionsDropdownContainer .dropdown-item.disabled', function (e) {
+	$(document).off('click.bulkAvailability', '#bulkActionsDropdownContainer .tttaiga-bulk-action.disabled').on('click.bulkAvailability', '#bulkActionsDropdownContainer .tttaiga-bulk-action.disabled', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		return false;

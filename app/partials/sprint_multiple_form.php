@@ -27,9 +27,9 @@
 				<div id="bulkCreateSprintPreview" class="border rounded p-2 bg-body-tertiary mt-3 d-none"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-outline-primary" id="previewBulkCreateSprints">Preview</button>
-				<button type="button" class="btn btn-success" id="submitBulkCreateSprints">Create Sprints</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-outline-primary tttaiga-bulk-handle" id="previewBulkCreateSprints">Preview</button>
+				<button type="button" class="btn btn-success tttaiga-bulk-handle" id="submitBulkCreateSprints">Create Sprints</button>
 			</div>
 		</div>
 	</div>
@@ -75,8 +75,8 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-primary" id="submitBulkUpdateSprint">Update Sprints</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary tttaiga-bulk-handle" id="submitBulkUpdateSprint">Update Sprints</button>
 			</div>
 		</div>
 	</div>
@@ -95,8 +95,8 @@
 				<div id="selectedSprintsDeleteList"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-danger" id="confirmBulkDeleteSprints">Delete Sprints</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-danger tttaiga-bulk-handle" id="confirmBulkDeleteSprints">Delete Sprints</button>
 			</div>
 		</div>
 	</div>

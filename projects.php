@@ -4,11 +4,11 @@ require __DIR__ . '/app/init.php';
 
 $pageTitle = 'Projek';
 $searchPlaceholder = 'Search projects...';
-$primaryAction = '<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#singleProjectModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
+$primaryAction = '<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#singleProjectModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
 $bulkActions = '
-	<li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateProjectModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
-	<li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateProjectModal"><i class="bi bi-pencil-square me-2"></i> Bulk Prefix</a></li>
-	<li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#bulkDeleteProjectModal"><i class="bi bi-trash me-2"></i> Bulk Delete</a></li>
+	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateProjectModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
+	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateProjectModal"><i class="bi bi-pencil-square me-2"></i> Bulk Prefix</a></li>
+	<li><a class="dropdown-item text-danger tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkDeleteProjectModal"><i class="bi bi-trash me-2"></i> Bulk Delete</a></li>
 ';
 
 $sortOptions = [

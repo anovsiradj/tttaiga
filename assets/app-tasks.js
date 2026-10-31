@@ -130,7 +130,7 @@ $(document).ready(function () {
 
             const $btn = $('#submitBulkTaskCreate');
             $btn.prop('disabled', true).text('Creating...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             let createdCount = 0;
             let errorCount = 0;
@@ -159,7 +159,7 @@ $(document).ready(function () {
                         createdCount++;
                         if (createdCount + errorCount === titles.length) {
                             $btn.prop('disabled', false).text('Create Tasks');
-                            $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                            $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                             TTTaiga.UI.notify(`Successfully created ${createdCount} tasks!`, 'success');
                             $('#bulkCreateTaskModal').modal('hide');
                             TTTaiga.Tasks.load();
@@ -170,7 +170,7 @@ $(document).ready(function () {
                         errorCount++;
                         if (createdCount + errorCount === titles.length) {
                             $btn.prop('disabled', false).text('Create Tasks');
-                            $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                            $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                             TTTaiga.UI.notify(`Created ${createdCount} tasks, but ${errorCount} failed.`, 'danger');
                         }
                     }
@@ -191,11 +191,11 @@ $(document).ready(function () {
 
             const $btn = $('#confirmBulkDeleteTasks');
             $btn.prop('disabled', true).text('Deleting...');
-            $('.filter-toolbar, .btn, .dropdown-item').addClass('disabled');
+            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
 
             taigaExecuteBulkParallel('/tasks/', selectedTasks, 'DELETE', null, (successCount, errorCount) => {
                 $btn.prop('disabled', false).text('Delete Tasks');
-                $('.filter-toolbar, .btn, .dropdown-item').removeClass('disabled');
+                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 if (errorCount === 0) {
                     TTTaiga.UI.notify(`Successfully deleted ${successCount} tasks!`, 'success');
                     $('#bulkDeleteTaskModal').modal('hide');

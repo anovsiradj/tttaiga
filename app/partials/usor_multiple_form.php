@@ -56,9 +56,9 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-outline-primary" id="previewBulkCreate">Preview</button>
-				<button type="button" class="btn btn-success" id="submitBulkCreate">Create Usors</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-outline-primary tttaiga-bulk-handle" id="previewBulkCreate">Preview</button>
+				<button type="button" class="btn btn-success tttaiga-bulk-handle" id="submitBulkCreate">Create Usors</button>
 			</div>
 		</div>
 	</div>
@@ -125,8 +125,8 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-primary" id="submitBulkUpdate">Update Usors</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary tttaiga-bulk-handle" id="submitBulkUpdate">Update Usors</button>
 			</div>
 		</div>
 	</div>

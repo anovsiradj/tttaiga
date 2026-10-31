@@ -13,9 +13,9 @@
 				<div id="bulkCreateProjectPreview" class="border rounded p-2 bg-body-tertiary mt-3 d-none"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-outline-primary" id="previewBulkCreateProjects">Preview</button>
-				<button type="button" class="btn btn-success" id="submitBulkCreateProjects">Create Projects</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-outline-primary tttaiga-bulk-handle" id="previewBulkCreateProjects">Preview</button>
+				<button type="button" class="btn btn-success tttaiga-bulk-handle" id="submitBulkCreateProjects">Create Projects</button>
 			</div>
 		</div>
 	</div>
@@ -50,8 +50,8 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-primary" id="submitBulkProjectUpdate">Apply Prefix</button>
+				<button type="button" class="btn btn-secondary tttaiga-bulk-handle" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary tttaiga-bulk-handle" id="submitBulkProjectUpdate">Apply Prefix</button>
 			</div>
 		</div>
 	</div>
