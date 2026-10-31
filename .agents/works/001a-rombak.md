@@ -39,7 +39,7 @@ Perombakan total struktur *frontend* menggunakan pola **Global Namespace** (`win
 ## Tahap 4: Rollout & Cleanup [Done]
 - **Tujuan:** Menyelesaikan migrasi ke semua modul dan menghapus *legacy code*.
 - **Aksi:**
-    - Terapkan pola `TTTaiga` namespace ke `usor.php`, `isu.php`, `epik.php`, `sprints.php`, `projects.php`.
+    - Terapkan pola `TTTaiga` namespace ke `usor.php`, `isu.php`, `epik.php`, `sprints.php`, `proyeks.php`.
     - Hapus semua *legacy code* atau fungsi `taigaLoad*` lama yang sudah tidak digunakan.
     - *Refactor* file PHP root untuk hanya memuat layout dan konfigurasi minimal.
     - Audit dependensi lokal (`wiet`, `php-skit`, `web-skit`).

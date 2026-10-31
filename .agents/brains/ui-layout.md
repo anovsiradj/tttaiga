@@ -1,4 +1,4 @@
-# UI LAYOUT: List Pages (projects/sprints/epiks/usors/tasks/isus)
+# UI LAYOUT: List Pages (proyeks/sprints/epiks/usors/tasks/isus)
 
 ## Stack (top -> bottom, list pages)
 1. navbar (`app/layouts/main_navbar.php`) — sticky-top glass, active link di-set PHP via basename(PHP_SELF) + detail→list map
@@ -11,7 +11,7 @@
 ## Rules / decisions
 - ALL list pages SHARE `app/partials/list_header.php`; per-page var overrides drive visibility.
 - Standard control IDs NEVER change: `#searchInput #sortSelect #refreshBtn #projectSelect #statusSelect #epicSelect #userStorySelect #assignedToSelect` — JS (`taiga.js`) reads by ID only, no parent-structure assumptions.
-- `$hasFilters` computed in partial: true if any of project/epic/usTitle/status/assigned/additionalControls enabled. Prevents empty filter bar (projects.php & sprints.php have few/no domain filters).
+- `$hasFilters` computed in partial: true if any of project/epic/usTitle/status/assigned/additionalControls enabled. Prevents empty filter bar (proyeks.php & sprints.php have few/no domain filters).
 - Search + sort moved OUT of filter bar into own toolbar to declutter filter row.
 - toolbar STATIC (not sticky). filter bar stays fully visible (no collapse).
 - Styling: `.list-toolbar` in `assets/app.css` — flex wrap, search `flex 1 1 260px`, sort wrapper `flex 0 0 220px`.

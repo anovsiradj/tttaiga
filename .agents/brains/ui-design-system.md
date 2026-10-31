@@ -34,7 +34,7 @@
 - `.pagination` themed via `--bs-pagination-*` CSS vars (works, no hardcode issue).
 
 ## Components
-- Navbar (main_navbar.php): `sticky-top`, glass bg, 2px gradient hairline ::after, gradient brand text, nav-link pill hover/active; active state set PHP-side via `basename(PHP_SELF)` incl. detail→list map (`project.php`→`projects.php` etc).
+- Navbar (main_navbar.php): `sticky-top`, glass bg, 2px gradient hairline ::after, gradient brand text, nav-link pill hover/active; active state set PHP-side via `basename(PHP_SELF)` incl. detail→list map (`proyek.php`→`proyeks.php` etc).
 - `.taiga-list-card`: radius-md, ::before 3px gradient hairline visible on hover only, hover translateY(-3px).
 - `.item-header`: gradient `115deg brand-700→brand→ember` + radial white glow ::after.
 - `.sticky-bulk-bar.has-selection`: 2px brand bottom border (kept) + brand shadow.

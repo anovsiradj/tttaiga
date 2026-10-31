@@ -42,7 +42,7 @@ $(document).off('click.bulkAvailability', '#bulkActionsDropdownContainer .tttaig
 ## File yang Diubah
 
 ### JS (8 file)
-- assets/app-projects.js (4)
+- assets/app-proyeks.js (4)
 - assets/app-sprints.js (6)
 - assets/app-usors.js (4)
 - assets/app-epiks.js (4)
@@ -51,7 +51,7 @@ $(document).off('click.bulkAvailability', '#bulkActionsDropdownContainer .tttaig
 - assets/taiga.js (3: 2 selector + 1 click handler)
 
 ### PHP (6 file, 18 elemen dropdown-item)
-- projects.php, sprints.php, epiks.php, usors.php, tasks.php, isus.php
+- proyeks.php, sprints.php, epiks.php, usors.php, tasks.php, isus.php
 - Setiap `<a class="dropdown-item">` di `$bulkActions` dapat `tttaiga-bulk-handle tttaiga-bulk-action`
 
 ## Class yang Digunakan
@@ -72,7 +72,7 @@ vendor/anovsiradj/web-skit/widgets/twbs/v5-dark-mode-toggle.html:
 | Tema toggle kena `.disabled` dari `taigaUpdateBulkActionAvailability()` | ✅ Teratasi | Skip `data-bs-theme-value` di loop |
 | Click handler menangkap tema dropdown | ✅ Teratasi | Menggunakan `.tttaiga-bulk-action.disabled` |
 | Bulk ops tidak berfungsi | ✅ Aman | Semua tombol bulk tetap punya class yang benar |
-| Detail pages (project.php, sprint.php, dll) | ✅ Tidak ada bulk ops | Tidak perlu diubah |
+| Detail pages (proyek.php, sprint.php, dll) | ✅ Tidak ada bulk ops | Tidak perlu diubah |
 | Login / Index / Sprint Planning | ✅ Tidak ada bulk ops global | Tidak perlu diubah |
 
 ## Theme System
