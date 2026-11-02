@@ -32,13 +32,7 @@ require __DIR__ . '/app/init.php';
 			'-estimated_finish' => 'Finish Date (DESC)',
 		];
 		$primaryAction = '<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#singleSprintModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
-		$additionalControls = '
-		<div class="col-md-auto">
-			<a class="btn btn-outline-primary tttaiga-bulk-handle" href="sprint_plan_form.php" title="Sprint Planning">
-				<i class="bi bi-kanban me-1"></i> Planning
-			</a>
-		</div>
-	';
+		$additionalControls = '';
 		$bulkActions = '
 			<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkCreateSprintModal"><i class="bi bi-plus-lg me-2"></i> Bulk Create</a></li>
 			<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateSprintModal"><i class="bi bi-pencil-square me-2"></i> Bulk Update</a></li>

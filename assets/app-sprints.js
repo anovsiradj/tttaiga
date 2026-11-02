@@ -46,6 +46,7 @@ $(document).ready(function () {
                         </div>
                         <div class="card-footer taiga-card-actions">
                             <a href="${taigaItemPermalink('sprint', sprint, window.apiUrl) || '#'}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">Taiga</a>
+                            <a href="sprint_plan_form.php?id=${sprint.id}" class="btn btn-sm btn-outline-success" title="Sprint Planning"><i class="bi bi-kanban me-1"></i> Planning</a>
                             <button class="btn btn-sm btn-outline-primary view-sprint" data-sprint-id="${sprint.id}">View</button>
                             <button class="btn btn-sm btn-outline-secondary edit-sprint" data-sprint-id="${sprint.id}" data-bs-toggle="modal" data-bs-target="#singleSprintModal">Edit</button>
                         </div>
