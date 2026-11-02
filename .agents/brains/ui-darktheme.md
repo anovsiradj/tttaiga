@@ -78,7 +78,7 @@ vendor/anovsiradj/web-skit/widgets/twbs/v5-dark-mode-toggle.html:
 ## Theme System
 - Aktif: vendor web-skit `v5-dark-mode-toggle.js` (id `#bd-theme`, attr `data-bs-theme-value`)
 - Memuat via `main_head.php` (CSS + JS) dan `main_navbar.php` (HTML)
-- `assets/theme.js` ada TAPI tidak dimuat oleh halaman apa pun (code mati)
+- `assets/theme.js` (code mati) sudah dihapus; theme toggle aktif hanya lewat web-skit FAB
 - Semua halaman pakai `data-bs-theme="auto"` di `<html>`
 
 ---

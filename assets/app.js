@@ -60,17 +60,6 @@ function tttaigaInstallHtmlSanitizer() {
 	$.fn.__tttaigaHtmlSanitized = true;
 }
 
-function jsonToSelect(json, el, valueKey = 'id', textKey = 'name') {
-	const $el = $(el);
-	$el.empty().append($('<option>', { value: '', text: ' ... ' }));
-	json.forEach(item => {
-		$el.append($('<option>', {
-			value: item[valueKey],
-			text: item[textKey]
-		}));
-	});
-}
-
 $(document).ready(function () {
 	tttaigaInstallHtmlSanitizer();
 
