@@ -7,7 +7,7 @@
  * It forwards requests to the Taiga API and returns the response.
  */
 
-use app\helpers\TaigaTaskEpicFilter;
+use app\helpers\TaigaProxyList;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/app/init.php';
@@ -169,6 +169,12 @@ if ($apiPath === '/tasks' && $method === 'GET' && isset($queryArray['epic']) && 
 	exit;
 }
 
+// Taiga silently ignores some list params (search/sort). Handle them in the proxy.
+if ($method === 'GET' && TaigaProxyList::needsTransform($apiPath, $queryArray)) {
+	tttaigaProxyListTransform($apiUrl, $apiPath, $queryArray);
+	exit;
+}
+
 if (!empty($queryArray)) {
 	$targetUrl .= '?' . http_build_query($queryArray);
 }
@@ -291,6 +297,64 @@ function tttaigaProxyEmitUpstreamError(array $response, string $fallback): void
 }
 
 /**
+ * Search/sort a list the way the UI expects, then paginate.
+ *
+ * Used for `/milestones` text search and for `order_by` fields Taiga ignores
+ * (`/epics`, `/milestones?order_by=modified_date`, `/projects` name/date sorts).
+ */
+function tttaigaProxyListTransform(string $apiUrl, string $path, array $query): void
+{
+	$token = (string) ($_SESSION['taiga_token'] ?? '');
+
+	$page = isset($query['page']) ? (int) $query['page'] : 1;
+	$pageSize = isset($query['page_size']) ? (int) $query['page_size'] : 30;
+
+	$orderBy = isset($query['order_by']) && is_string($query['order_by']) && $query['order_by'] !== ''
+		? $query['order_by']
+		: null;
+	$orderField = $orderBy !== null ? ltrim($orderBy, '-') : null;
+	$orderDesc = $orderBy !== null && str_starts_with($orderBy, '-');
+
+	$searchField = $path === '/milestones' ? 'name' : null;
+	$needle = null;
+	if ($searchField !== null && isset($query['q']) && is_string($query['q']) && trim($query['q']) !== '') {
+		$needle = trim($query['q']);
+	}
+
+	$sortHere = $orderField !== null && !in_array($orderField, TaigaProxyList::nativeOrderFields($path), true);
+
+	$upstreamQuery = $query;
+	unset($upstreamQuery['page'], $upstreamQuery['page_size']);
+	if ($needle !== null) {
+		// `/milestones` ignores `q`; the proxy filters it after fetching.
+		unset($upstreamQuery['q']);
+	}
+	if ($sortHere) {
+		// Taiga ignores this sort field; keep its default order and sort below.
+		unset($upstreamQuery['order_by']);
+	}
+
+	$items = tttaigaProxyFetchAll($apiUrl, $path, $upstreamQuery, $token, 'Unable to load ' . ltrim($path, '/'));
+
+	if ($needle !== null) {
+		$items = TaigaProxyList::filterByText($items, $searchField, $needle);
+	}
+
+	if ($sortHere) {
+		$items = TaigaProxyList::sortBy($items, $orderField, $orderDesc);
+	}
+
+	$paged = TaigaProxyList::paginate($items, $page, $pageSize);
+
+	foreach (TaigaProxyList::paginationHeaders($paged['total'], $page, $pageSize) as $name => $value) {
+		header($name . ': ' . $value);
+	}
+
+	header('Content-Type: application/json');
+	echo json_encode($paged['items']);
+}
+
+/**
  * Fetch every page of a list endpoint so the proxy can filter across the whole set.
  *
  * @return array<int, mixed>
@@ -370,7 +434,7 @@ function tttaigaProxyTasksByEpic(string $apiUrl, array $query): void
 		$userStoryQuery['project'] = $projectId;
 	}
 
-	$userStoryIds = TaigaTaskEpicFilter::userStoryIds(
+	$userStoryIds = TaigaProxyList::userStoryIds(
 		tttaigaProxyFetchAll($apiUrl, '/userstories', $userStoryQuery, $token, 'Unable to load epic user stories')
 	);
 
@@ -384,10 +448,10 @@ function tttaigaProxyTasksByEpic(string $apiUrl, array $query): void
 	$tasks = tttaigaProxyFetchAll($apiUrl, '/tasks', $taskQuery, $token, 'Unable to load tasks');
 
 	// 4) Keep only the epic's tasks, then paginate the merged result.
-	$filtered = TaigaTaskEpicFilter::filterByUserStoryIds($tasks, $userStoryIds, $userStoryFilter);
-	$paged = TaigaTaskEpicFilter::paginate($filtered, $page, $pageSize);
+	$filtered = TaigaProxyList::filterByUserStoryIds($tasks, $userStoryIds, $userStoryFilter);
+	$paged = TaigaProxyList::paginate($filtered, $page, $pageSize);
 
-	foreach (TaigaTaskEpicFilter::paginationHeaders($paged['total'], $page, $pageSize) as $name => $value) {
+	foreach (TaigaProxyList::paginationHeaders($paged['total'], $page, $pageSize) as $name => $value) {
 		header($name . ': ' . $value);
 	}
 

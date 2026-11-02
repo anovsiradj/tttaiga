@@ -191,6 +191,19 @@ Query parameters for list endpoints:
 - `order_by` (string, e.g., "created_date", "-created_date", "order", "ref")
 - `x-disable-pagination` (header, set to "True" to disable)
 
+### Ignored list params (verified live)
+Some params are accepted with HTTP 200 but silently ignored:
+- `/epics?order_by=` — **all** fields ignored (verified with subject/created_date/modified_date/status/ref).
+- `/projects?order_by=` — only `total_fans`, `total_activity` honored; `name`, `created_date`, `modified_date` ignored.
+- `/milestones?q=` (and `name`/`search`) — ignored; milestones have no text search. `closed=true|false` **does** work.
+- `/milestones?order_by=modified_date` — ignored (`name`, `created_date`, `estimated_start`, `estimated_finish` work).
+- `/projects?status=` — ignored (the UI disables the status filter there).
+- `/epics?user_story=` — ignored (no page uses it).
+- Tasks have no `task_order` field: the real fields are `taskboard_order` (not orderable) and `us_order` (orderable, used for the UI "Task Order" sort).
+- Epic custom order field is `epics_order` (plural).
+
+The app proxy (`api.php` + `app/helpers/TaigaProxyList.php`) compensates for these: it searches milestones by name and sorts the affected endpoints in PHP. Callers keep sending the normal params.
+
 ## Version/OCC for all work items
 
 **ALL write operations (PUT, PATCH, DELETE) require the `version` field.**

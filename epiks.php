@@ -29,8 +29,8 @@ require __DIR__ . '/app/init.php';
 			'-modified_date' => 'Modified (Newest)',
 			'status' => 'Status (ASC)',
 			'-status' => 'Status (DESC)',
-			'epic_order' => 'Custom Order (ASC)',
-			'-epic_order' => 'Custom Order (DESC)',
+			'epics_order' => 'Custom Order (ASC)',
+			'-epics_order' => 'Custom Order (DESC)',
 		];
 		$primaryAction = '<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#singleEpicModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
 $bulkActions = '

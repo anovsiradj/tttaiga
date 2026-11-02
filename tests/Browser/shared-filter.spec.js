@@ -159,3 +159,23 @@ test('sprint planning is a shared-filter page: project persists, sprint id prese
 	const stored = await page.evaluate(() => sessionStorage.getItem('tttaiga_shared_filters'));
 	expect(stored).toContain('107');
 });
+
+test('sort selects use the real Taiga order field names', async ({ page }) => {
+	// Taiga ignores `epic_order`; the epic field is `epics_order` (plural).
+	await page.goto('epiks.php?project=107');
+	await expect(page.locator('#sortSelect option[value="epics_order"]')).toHaveCount(1);
+	await expect(page.locator('#sortSelect option[value="epic_order"]')).toHaveCount(0);
+
+	// Taiga tasks have no `task_order`; the orderable field is `us_order`.
+	await page.goto('tasks.php?project=107');
+	await expect(page.locator('#sortSelect option[value="us_order"]')).toHaveCount(1);
+	await expect(page.locator('#sortSelect option[value="task_order"]')).toHaveCount(0);
+
+	// Picking the epic custom order sends it upstream.
+	const captured = [];
+	page.on('request', (req) => {
+		if (req.url().includes('api.php/epics?')) captured.push(req.url());
+	});
+	await page.goto('epiks.php?project=107&order_by=epics_order');
+	await expect.poll(() => captured.some((u) => u.includes('order_by=epics_order'))).toBeTruthy();
+});

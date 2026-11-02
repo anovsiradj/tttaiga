@@ -2,6 +2,10 @@
 
 ## Projects
 
+### Ignored params (verified live)
+- `order_by` honors only `total_fans` and `total_activity`; `name`, `created_date`, `modified_date` are ignored (the app proxy sorts those).
+- `status` is ignored (the proyeks page disables that filter).
+
 ### Endpoints
 - `GET /api/v1/projects` - List projects (paginated, user's accessible projects)
 - `POST /api/v1/projects` - Create project
@@ -132,6 +136,11 @@ POST /api/v1/memberships/bulk_create
 - Viewer (read-only)
 
 ## Milestones (Sprints)
+
+### Ignored params (verified live)
+- `q`, `name`, `search` are ignored — there is no milestone text search (use the app proxy, which filters by `name`).
+- `closed=true|false` **is** honored.
+- `order_by` honors `name`, `created_date`, `estimated_start`, `estimated_finish`; `modified_date` is ignored (proxy sorts it).
 
 ### Endpoints
 - `GET /api/v1/milestones?project={projectId}` - List milestones

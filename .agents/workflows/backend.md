@@ -31,7 +31,25 @@ Taiga's `/tasks` has no `epic` filter (its `filters_data` only exposes statuses/
 3. Keep only tasks whose `user_story` is in that id set (plus `user_story` if also given), then re-slice.
 4. Emit its own `X-Paginated`, `X-Paginated-By`, `X-Pagination-Count`, `X-Pagination-Current` headers (Taiga's pagination headers are **not** forwarded in this branch) so `taigaRenderPagination()` keeps working.
 
-Implementation: `tttaigaProxyTasksByEpic()` in `api.php` + `app/helpers/TaigaTaskEpicFilter.php` (pure, unit-tested). On upstream error it returns the error status — it never falls back to unfiltered tasks. An epic with no user stories returns `[]` + count 0.
+Implementation: `tttaigaProxyTasksByEpic()` in `api.php` + `app/helpers/TaigaProxyList.php` (pure, unit-tested). On upstream error it returns the error status — it never falls back to unfiltered tasks. An epic with no user stories returns `[]` + count 0.
+
+## Ignored list params (search/sort)
+Taiga silently ignores a few list params the UI sends. `api.php` handles them instead of forwarding them, via `tttaigaProxyListTransform()` (also in `TaigaProxyList`):
+
+- `/milestones?q=` — no text search exists. The proxy fetches the project's milestones and keeps those whose `name` contains `q` (case-insensitive substring).
+- `/epics?order_by=` — **every** field is ignored upstream. All sorts are done proxy-side (`/epics` has no native order fields).
+- `/projects?order_by=` — only `total_fans` and `total_activity` are honored upstream. `name`, `created_date`, `modified_date` are sorted proxy-side.
+- `/milestones?order_by=` — `name`, `created_date`, `estimated_start`, `estimated_finish` are honored upstream; `modified_date` is sorted proxy-side.
+
+Mechanics (same shape as the epic branch):
+1. Fetch **all** pages of the endpoint with `page_size=1000`, minus `page`/`page_size` (and minus `order_by` when it is not native, so upstream default order is kept as the tie-break).
+2. If `q` was present for `/milestones`, keep only name matches.
+3. If `order_by` is not in `tttaigaProxyNativeOrderFields()`, sort proxy-side: nulls last ascending / first descending, numeric fields numerically, everything else byte-wise.
+4. Re-slice for `page`/`page_size` and emit the `X-Paginated*` headers.
+
+`tttaigaProxyNativeOrderFields()` holds the per-endpoint list of fields Taiga actually honors. Unknown fields (e.g. a shared `order_by` leaked from another page) sort by nothing and keep upstream order — never an error.
+
+Field-name note: the Taiga epic field is `epics_order` (plural) and the task "task order" field is `us_order`; the UI selects use those names.
 
 ## CORS
 `api.php` responds with permissive CORS headers (including `Access-Control-Allow-Origin: *`) and handles `OPTIONS` preflight by exiting early.

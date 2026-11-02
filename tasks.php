@@ -31,8 +31,8 @@ require __DIR__ . '/app/init.php';
 			'-modified_date' => 'Modified (Newest)',
 			'status' => 'Status (ASC)',
 			'-status' => 'Status (DESC)',
-			'task_order' => 'Task Order (ASC)',
-			'-task_order' => 'Task Order (DESC)',
+			'us_order' => 'Task Order (ASC)',
+			'-us_order' => 'Task Order (DESC)',
 		];
 		$primaryAction = '<button class="btn btn-primary tttaiga-bulk-handle" data-bs-toggle="modal" data-bs-target="#singleTaskModal"><i class="bi bi-plus-lg me-1"></i> Add New</button>';
 $bulkActions = '
