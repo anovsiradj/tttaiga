@@ -272,11 +272,26 @@ window.TTTaiga = { ...window.TTTaiga,
     }
 };
 
-// --- Shared Filter Logic (extracted from app.js) ---
+// --- Shared Filter Logic ---
+//
+// Filter dipersist antar modul list lewat sessionStorage + URL.
+// Setiap modul punya whitelist key sendiri supaya filter yang context-specific
+// (mis. epic hanya dipakai di usors/tasks) tidak bocor ke modul lain.
 
-const TTTTAIGA_SHARED_FILTER_KEYS = ['q', 'project', 'status', 'epic', 'user_story', 'assigned_to', 'milestone', 'order_by'];
-const TTTTAIGA_SHARED_FILTER_MODULES = new Set(['proyeks.php', 'sprints.php', 'sprint_plan_form.php', 'epiks.php', 'usors.php', 'tasks.php', 'isus.php']);
+const TTTTAIGA_FILTER_WHITELIST = {
+    'proyeks.php': ['q', 'order_by'],
+    'sprints.php': ['q', 'project', 'order_by'],
+    'epiks.php': ['q', 'project', 'status', 'assigned_to', 'order_by'],
+    'usors.php': ['q', 'project', 'status', 'epic', 'order_by'],
+    'tasks.php': ['q', 'project', 'status', 'epic', 'user_story', 'assigned_to', 'order_by'],
+    'isus.php': ['q', 'project', 'status', 'assigned_to', 'order_by']
+};
+
+const TTTTAIGA_SHARED_FILTER_MODULES = new Set(Object.keys(TTTTAIGA_FILTER_WHITELIST));
 const TTTTAIGA_SHARED_FILTER_STORAGE_KEY = 'tttaiga_shared_filters';
+
+// Union semua key: dipakai untuk membersihkan query param filter lama di URL target.
+const TTTTAIGA_ALL_FILTER_KEYS = [...new Set(Object.values(TTTTAIGA_FILTER_WHITELIST).flat())];
 
 function tttaigaCurrentPageName() {
     const page = window.location.pathname.split('/').pop();
@@ -287,9 +302,15 @@ function tttaigaIsSharedFilterPage(page) {
     return TTTTAIGA_SHARED_FILTER_MODULES.has(page || tttaigaCurrentPageName());
 }
 
-function tttaigaBuildSharedFilterParams(params) {
+// Key yang boleh dipakai modul tertentu. Modul tanpa whitelist tidak membawa filter apa pun.
+function tttaigaFilterKeysForPage(page) {
+    return TTTTAIGA_FILTER_WHITELIST[page] || [];
+}
+
+function tttaigaBuildSharedFilterParams(params, targetPage) {
+    const page = targetPage || tttaigaCurrentPageName();
     const shared = new URLSearchParams();
-    TTTTAIGA_SHARED_FILTER_KEYS.forEach(key => {
+    tttaigaFilterKeysForPage(page).forEach(key => {
         const value = params.get(key);
         if (value !== null && String(value).trim() !== '') {
             shared.set(key, value);
@@ -298,13 +319,14 @@ function tttaigaBuildSharedFilterParams(params) {
     return shared;
 }
 
-function tttaigaReadStoredSharedFilters() {
+function tttaigaReadStoredSharedFilters(targetPage) {
+    const page = targetPage || tttaigaCurrentPageName();
     try {
         const raw = sessionStorage.getItem(TTTTAIGA_SHARED_FILTER_STORAGE_KEY);
         if (!raw) return new URLSearchParams();
         const parsed = JSON.parse(raw);
         const params = new URLSearchParams();
-        TTTTAIGA_SHARED_FILTER_KEYS.forEach(key => {
+        tttaigaFilterKeysForPage(page).forEach(key => {
             if (parsed && parsed[key] !== undefined && String(parsed[key]).trim() !== '') {
                 params.set(key, String(parsed[key]));
             }
@@ -316,9 +338,8 @@ function tttaigaReadStoredSharedFilters() {
 }
 
 function tttaigaStoreSharedFilters(params) {
-    const shared = params instanceof URLSearchParams
-        ? tttaigaBuildSharedFilterParams(params)
-        : tttaigaBuildSharedFilterParams(new URLSearchParams(params || {}));
+    const source = params instanceof URLSearchParams ? params : new URLSearchParams(params || {});
+    const shared = tttaigaBuildSharedFilterParams(source, tttaigaCurrentPageName());
     const payload = {};
     shared.forEach((value, key) => { payload[key] = value; });
     try {
@@ -331,10 +352,11 @@ function tttaigaStoreSharedFilters(params) {
     return shared;
 }
 
-function tttaigaSharedFilterParams() {
-    const current = tttaigaBuildSharedFilterParams(new URLSearchParams(window.location.search));
+function tttaigaSharedFilterParams(targetPage) {
+    const page = targetPage || tttaigaCurrentPageName();
+    const current = tttaigaBuildSharedFilterParams(new URLSearchParams(window.location.search), page);
     if ([...current.keys()].length > 0) return current;
-    return tttaigaReadStoredSharedFilters();
+    return tttaigaReadStoredSharedFilters(page);
 }
 
 function tttaigaPersistSharedFilters(params) {
@@ -360,10 +382,13 @@ function tttaigaEnsureSharedFiltersInUrl() {
 }
 
 function tttaigaUrlWithSharedFilters(href) {
-    const shared = tttaigaSharedFilterParams();
     const url = new URL(href, window.location.href);
-    TTTTAIGA_SHARED_FILTER_KEYS.forEach(key => { url.searchParams.delete(key); });
-    shared.forEach((value, key) => { url.searchParams.set(key, value); });
+    const targetPage = url.pathname.split('/').pop();
+    if (!tttaigaIsSharedFilterPage(targetPage)) {
+        return url.pathname.split('/').pop() + (url.search ? url.search : '') + (url.hash || '');
+    }
+    TTTTAIGA_ALL_FILTER_KEYS.forEach(key => { url.searchParams.delete(key); });
+    tttaigaSharedFilterParams(targetPage).forEach((value, key) => { url.searchParams.set(key, value); });
     return url.pathname.split('/').pop() + (url.search ? url.search : '') + (url.hash || '');
 }
 
