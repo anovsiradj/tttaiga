@@ -854,7 +854,11 @@ function taigaBindFilters(onFilterChange) {
 			formatText: (item) => `#${item.ref}: ${item.subject}`,
 			additionalParams: () => {
 				const pid = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.project).val();
-				return pid ? { project: pid } : {};
+				const eid = TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.epic).val();
+				const params = {};
+				if (pid) params.project = pid;
+				if (eid) params.epic = eid;
+				return params;
 			}
 		});
 	}
@@ -1001,6 +1005,11 @@ function taigaBindFilters(onFilterChange) {
 			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.epic + ', ' + TTTaiga.Selectors.strings.filter.userStory).val(null).trigger('change.select2');
 			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.status).val(null).trigger('change.select2');
 			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.assignedTo).val(null).trigger('change.select2');
+		}
+
+		// When epic changes, clear the dependent usor dropdown (its options are scoped to the epic)
+		if ($(this).attr('id') === 'epicSelect') {
+			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.userStory).val(null).trigger('change.select2');
 		}
 
 		onFilterChange(1);
