@@ -130,3 +130,32 @@ test('user_story filter is dropped when leaving tasks for usors', async ({ page 
 	const taskHref = await navLink(page, 'Task').getAttribute('href');
 	expect(taskHref).toContain('user_story=9');
 });
+
+test('whitelist invariant: a module drops unsupported filter keys from its own URL', async ({ page }) => {
+	await page.goto('epiks.php?project=107');
+	await expect.poll(() => page.url(), { timeout: 10000 }).toContain('project=107');
+
+	// Simulate a stale URL (e.g. bookmark) carrying keys epiks does not support.
+	const after = await page.evaluate(() => {
+		history.replaceState(null, '', 'epiks.php?epic=55&user_story=9&project=107');
+		window.tttaigaEnsureSharedFiltersInUrl();
+		const q = new URLSearchParams(window.location.search);
+		return { epic: q.get('epic'), user_story: q.get('user_story'), project: q.get('project') };
+	});
+
+	expect(after.epic).toBeNull();
+	expect(after.user_story).toBeNull();
+	expect(after.project).toBe('107');
+});
+
+test('sprint planning is a shared-filter page: project persists, sprint id preserved', async ({ page }) => {
+	await page.goto('sprint_plan_form.php?id=123&project=107');
+
+	await expect.poll(() => page.url(), { timeout: 10000 }).toContain('project=107');
+	expect(page.url()).toContain('id=123');
+
+	// Regression: sprint_plan_form.php must remain a shared-filter module so its
+	// project selection propagates to the other list pages.
+	const stored = await page.evaluate(() => sessionStorage.getItem('tttaiga_shared_filters'));
+	expect(stored).toContain('107');
+});

@@ -281,6 +281,8 @@ window.TTTaiga = { ...window.TTTaiga,
 const TTTTAIGA_FILTER_WHITELIST = {
     'proyeks.php': ['q', 'order_by'],
     'sprints.php': ['q', 'project', 'order_by'],
+    // Sprint planning hanya punya project select; sprint dipilih lewat `id` (bukan filter).
+    'sprint_plan_form.php': ['project'],
     'epiks.php': ['q', 'project', 'status', 'assigned_to', 'order_by'],
     'usors.php': ['q', 'project', 'status', 'epic', 'order_by'],
     'tasks.php': ['q', 'project', 'status', 'epic', 'user_story', 'assigned_to', 'order_by'],
@@ -370,13 +372,24 @@ function tttaigaPersistSharedFilters(params) {
 function tttaigaEnsureSharedFiltersInUrl() {
     if (!tttaigaIsSharedFilterPage()) return;
     const url = new URL(window.location.href);
-    const current = tttaigaBuildSharedFilterParams(url.searchParams);
+    const page = tttaigaCurrentPageName();
+    const allowed = tttaigaFilterKeysForPage(page);
+
+    // Buang filter key yang tidak dipakai modul ini. Ini invariant whitelist:
+    // key asing (mis. epic di epiks.php) tidak boleh bertahan di URL, karena
+    // akan ikut terbawa lagi saat pindah ke modul yang memakainya.
+    TTTTAIGA_ALL_FILTER_KEYS.forEach(key => {
+        if (!allowed.includes(key)) url.searchParams.delete(key);
+    });
+
+    const current = tttaigaBuildSharedFilterParams(url.searchParams, page);
     if ([...current.keys()].length > 0) {
         tttaigaStoreSharedFilters(url.searchParams);
+        window.history.replaceState(null, '', url.toString());
         return;
     }
-    const stored = tttaigaReadStoredSharedFilters();
-    if ([...stored.keys()].length === 0) return;
+
+    const stored = tttaigaReadStoredSharedFilters(page);
     stored.forEach((value, key) => { url.searchParams.set(key, value); });
     window.history.replaceState(null, '', url.toString());
 }

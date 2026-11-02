@@ -34,6 +34,7 @@
 - Login test: DEBUG_USERNAME/DEBUG_PASSWORD di .env, server "Jeemce"
 
 ## Struktur web/
-- `web/assets/*` = symlink ke `assets/*` (taiga-core.js SAME inode, hash sama) → edit `assets/` saja, web auto-sync. JANGAN Copy-Item (error "overwrite with itself").
-- `web/` = docroot terpisah (.htaccess, index.php sendiri); URL utama test pakai root project (localhost:8400/anoop/tttaiga/tasks.php)
+- `web/` = salinan lama (stale, file biasa Sep 2025, BUKAN symlink). Root project adalah docroot
+  yang diserve (`APP_URL=http://localhost/tttaiga/`). `app/layouts/main.php`, `app/routes.php`,
+  `app/pages.php` juga tidak dipakai. Edit HANYA di `assets/` dan halaman root; jangan sentuh `web/`.
 - Cache bust: tasks.php pakai `&t=<?php echo time(); ?>`; halaman lain `?v=filemtime()` (cukup, file berubah → version berubah)
