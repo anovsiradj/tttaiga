@@ -7,6 +7,8 @@
  * It forwards requests to the Taiga API and returns the response.
  */
 
+use app\helpers\TaigaTaskEpicFilter;
+
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/app/init.php';
 
@@ -161,6 +163,12 @@ if ($apiPath === '/projects' && $method === 'GET' && !isset($queryArray['member'
 	$queryArray['member'] = $autoMemberId;
 }
 
+// Taiga's /tasks has no `epic` filter: translate it via user story membership.
+if ($apiPath === '/tasks' && $method === 'GET' && isset($queryArray['epic']) && is_string($queryArray['epic']) && $queryArray['epic'] !== '') {
+	tttaigaProxyTasksByEpic($apiUrl, $queryArray);
+	exit;
+}
+
 if (!empty($queryArray)) {
 	$targetUrl .= '?' . http_build_query($queryArray);
 }
@@ -215,3 +223,174 @@ foreach ($curl->resHeaders as $header) {
 
 header('Content-Type: application/json');
 echo $responseBody;
+
+/**
+ * Perform a JSON GET against the upstream Taiga API.
+ *
+ * @return array{status:int, data:mixed, raw:string|false, headers:array<string,string>}
+ */
+function tttaigaProxyGetJson(string $apiUrl, string $path, array $query, string $token): array
+{
+	$url = rtrim($apiUrl, '/') . $path;
+	if (!empty($query)) {
+		$url .= '?' . http_build_query($query);
+	}
+
+	$curl = new \anovsiradj\skit\CURL('', [
+		'Content-Type: application/json',
+		'Authorization: Bearer ' . $token,
+	], [
+		CURLOPT_URL => $url,
+		CURLOPT_CUSTOMREQUEST => 'GET',
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_ENCODING => '',
+	]);
+
+	$curl->exec();
+
+	$raw = $curl->data;
+	$headers = [];
+	foreach ($curl->resHeaders as $line) {
+		$pos = strpos($line, ':');
+		if ($pos !== false) {
+			$headers[strtolower(trim(substr($line, 0, $pos)))] = trim(substr($line, $pos + 1));
+		}
+	}
+
+	return [
+		'status' => (int) $curl->code(),
+		'data' => is_string($raw) ? json_decode($raw, true) : null,
+		'raw' => $raw,
+		'headers' => $headers,
+	];
+}
+
+/**
+ * Emit an upstream error without ever falling back to unfiltered data.
+ */
+function tttaigaProxyEmitUpstreamError(array $response, string $fallback): void
+{
+	$status = (int) ($response['status'] ?? 0);
+	if ($status < 400) {
+		$status = 502;
+	}
+
+	http_response_code($status);
+	header('Content-Type: application/json');
+
+	$raw = $response['raw'] ?? null;
+	$decoded = is_string($raw) ? json_decode($raw, true) : null;
+
+	if (is_array($decoded) || is_object($decoded)) {
+		echo $raw;
+	} else {
+		echo json_encode(['error' => $fallback]);
+	}
+
+	exit;
+}
+
+/**
+ * Fetch every page of a list endpoint so the proxy can filter across the whole set.
+ *
+ * @return array<int, mixed>
+ */
+function tttaigaProxyFetchAll(string $apiUrl, string $path, array $query, string $token, string $fallback): array
+{
+	$result = [];
+	$page = 1;
+	$maxPages = 100;
+
+	$query['page_size'] = 1000;
+
+	while (true) {
+		$query['page'] = $page;
+		$response = tttaigaProxyGetJson($apiUrl, $path, $query, $token);
+		if (($response['status'] ?? 0) >= 400 || !is_array($response['data'])) {
+			tttaigaProxyEmitUpstreamError($response, $fallback);
+		}
+
+		$batch = $response['data'];
+		$result = array_merge($result, $batch);
+
+		$total = isset($response['headers']['x-pagination-count'])
+			? (int) $response['headers']['x-pagination-count']
+			: count($result);
+
+		if ($batch === [] || count($result) >= $total || $page >= $maxPages) {
+			break;
+		}
+
+		$page++;
+	}
+
+	return $result;
+}
+
+/**
+ * `GET /tasks` with an `epic` filter.
+ *
+ * Taiga cannot filter tasks by epic, but it can filter user stories by epic and
+ * tasks by a single user story. This translates the epic into the set of its
+ * user story ids, keeps only matching tasks, and re-emits pagination headers so
+ * the client keeps its normal server-pagination behaviour.
+ */
+function tttaigaProxyTasksByEpic(string $apiUrl, array $query): void
+{
+	$token = (string) ($_SESSION['taiga_token'] ?? '');
+	$epicId = trim((string) $query['epic']);
+
+	$page = isset($query['page']) ? (int) $query['page'] : 1;
+	$pageSize = isset($query['page_size']) ? (int) $query['page_size'] : 30;
+
+	$userStoryFilter = null;
+	if (isset($query['user_story']) && $query['user_story'] !== '' && !is_array($query['user_story'])) {
+		$userStoryFilter = (int) $query['user_story'];
+	}
+
+	$projectId = isset($query['project']) && $query['project'] !== '' && !is_array($query['project'])
+		? (string) $query['project']
+		: null;
+
+	// 1) Resolve the epic's project when the request did not provide one.
+	if ($projectId === null) {
+		$epicResponse = tttaigaProxyGetJson($apiUrl, '/epics/' . rawurlencode($epicId), [], $token);
+		if (($epicResponse['status'] ?? 0) >= 400 || !is_array($epicResponse['data'])) {
+			tttaigaProxyEmitUpstreamError($epicResponse, 'Unable to resolve epic');
+		}
+		$projectId = isset($epicResponse['data']['project']) ? (string) $epicResponse['data']['project'] : null;
+	}
+
+	// 2) Collect the user story ids that belong to the epic.
+	$userStoryQuery = [
+		'epic' => $epicId,
+		'page_size' => 1000,
+	];
+	if ($projectId !== null) {
+		$userStoryQuery['project'] = $projectId;
+	}
+
+	$userStoryIds = TaigaTaskEpicFilter::userStoryIds(
+		tttaigaProxyFetchAll($apiUrl, '/userstories', $userStoryQuery, $token, 'Unable to load epic user stories')
+	);
+
+	// 3) Fetch every task matching the remaining filters (Taiga already orders them).
+	$taskQuery = $query;
+	unset($taskQuery['epic'], $taskQuery['page'], $taskQuery['page_size']);
+	if (!isset($taskQuery['project']) && $projectId !== null) {
+		$taskQuery['project'] = $projectId;
+	}
+
+	$tasks = tttaigaProxyFetchAll($apiUrl, '/tasks', $taskQuery, $token, 'Unable to load tasks');
+
+	// 4) Keep only the epic's tasks, then paginate the merged result.
+	$filtered = TaigaTaskEpicFilter::filterByUserStoryIds($tasks, $userStoryIds, $userStoryFilter);
+	$paged = TaigaTaskEpicFilter::paginate($filtered, $page, $pageSize);
+
+	foreach (TaigaTaskEpicFilter::paginationHeaders($paged['total'], $page, $pageSize) as $name => $value) {
+		header($name . ': ' . $value);
+	}
+
+	header('Content-Type: application/json');
+	echo json_encode($paged['items']);
+}

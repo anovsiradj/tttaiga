@@ -114,6 +114,10 @@ Keep aliases in UI text when the project already uses them, but use the official
 - `POST /api/v1/tasks/bulk_create` - Bulk create tasks
 - `GET /api/v1/tasks/filters_data?project={projectId}` - Get filter metadata
 
+### Epic filtering (app proxy)
+- `/tasks` does **not** support `epic` (its `filters_data` exposes only statuses/assigned_to/owners/tags/roles).
+- The app proxy (`api.php`) translates `GET /tasks?epic=` into user story membership; callers can keep sending `epic`.
+
 ### Required create fields
 - `project` (integer)
 - `subject` (string)
