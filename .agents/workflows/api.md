@@ -16,8 +16,8 @@ Always refer to the official Taiga API documentation for endpoint details, reque
 
 ## Integration Map
 - Backend proxy: `api.php` (forwards requests to Taiga, handles caching and Authorization fallbacks)
-- Frontend helpers: `assets/taiga.js` (standardized AJAX patterns, Select2, pagination, filters, bulk helpers)
-- Frontend globals: `assets/app.js` (sets `window.taigaToken`, `window.apiUrl`, `window.taigaModel` from localStorage)
+- Frontend helpers: `assets/taiga.js` (AJAX/Select2/pagination/filter/bulk helpers) + `assets/taiga-core.js` (session init, shared-filter whitelist, form helpers)
+- Frontend globals: `app/layouts/main_head.php` meng-inject `window.TTTaigaSession`; `assets/taiga-core.js` memetakannya ke `window.taigaToken`/`apiUrl`/`taigaModel` (berbasis PHP session, bukan localStorage)
 - Default server config: `app/configs/taiga.php`
 
 ## Terminology (UI)

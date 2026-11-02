@@ -78,14 +78,12 @@ $(document).ready(function () {
 		const url = settings && settings.url ? String(settings.url) : '';
 		if (xhr.status === 401 && url.indexOf('api.php') !== -1 && !window.location.pathname.endsWith('login.php')) {
 			tttaigaClearAuthState();
-			window.location.href = 'login.php';
 		}
 	});
 
 	$('#logoutBtn').on('click', function () {
-		tttaigaClearAuthState();
 		$.post('login.php', { action: 'logout' }).always(function () {
-			window.location.href = 'login.php';
+			tttaigaClearAuthState();
 		});
 	});
 });

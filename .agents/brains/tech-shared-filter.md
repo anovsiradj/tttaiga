@@ -42,5 +42,15 @@ SSoT: `assets/taiga-core.js`. Tidak ada implementasi lain (`app.js` sudah dibers
 2. Tambah key ke `TTTTAIGA_FILTER_WHITELIST` HANYA pada modul yang memakai.
 3. `taigaGetFilterParams()` (taiga.js) harus sudah emit key tsb.
 
+## Catatan: sessionStorage itu per-modul (by design)
+- Setiap kali modul menyimpan, `tttaigaStoreSharedFilters()` menimpa entri sessionStorage dengan
+  whitelist modul tsb saja. Filter context-specific (mis. `epic`) karena itu TIDAK bertahan bila
+  user mampir ke modul yang tidak memakainya (mis. usors → epiks → usors).
+- Ini disengaja: justru inilah fix bug "epic bocor". Filter lintas-modul (`project`) tetap aman
+  karena selalu ikut dibawa di URL saat navigasi.
+- Bila kelak ingin "disembunyikan tapi disimpan", ubah store jadi merge dan buat
+  `tttaigaSharedFilterParams()` merge (stored ∪ URL) — belum dilakukan.
+
 ## Test
-`tests/Browser/shared-filter.spec.js` — verifikasi epic/user_story/project tidak bocor antar modul.
+`tests/Browser/shared-filter.spec.js` — verifikasi epic/user_story/project tidak bocor antar modul,
+invariant URL saat load, dan sprint_plan_form tetap modul shared-filter.

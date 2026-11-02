@@ -2,7 +2,7 @@
 
 ## Principle
 - Professional + futuristic; NEVER pure white bg (light) / pitch black bg (dark).
-- Dual theme via `[data-bs-theme]` (web-skit FAB widget is the ONLY active toggle; `assets/theme.js` = dead code, only referenced by unused `app/layouts/main.php`).
+- Dual theme via `[data-bs-theme]` (web-skit FAB widget is the ONLY active toggle; legacy `assets/theme.js` + `app/layouts/main.php` sudah dihapus).
 
 ## Brand palette
 - Brand red scale: `--brand-300..700` (#EB8A7E→#93282C). Ember accent: `--ember-400..500` (#F58A3C/#F0762B).

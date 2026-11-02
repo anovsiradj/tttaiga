@@ -1003,11 +1003,6 @@ function taigaBindFilters(onFilterChange) {
 			TTTaiga.Selectors.$(TTTaiga.Selectors.strings.filter.assignedTo).val(null).trigger('change.select2');
 		}
 
-        // Update Global State with normalized filter keys
-        if (window.TTTaiga && window.TTTaiga.Filter) {
-            TTTaiga.Filter.syncState();
-        }
-        
 		onFilterChange(1);
 	});
 
@@ -1881,9 +1876,6 @@ function taigaApplyFiltersFromUrl() {
     }
 
     return chain.then(function () {
-        if (window.TTTaiga && window.TTTaiga.Filter) {
-            window.TTTaiga.Filter.syncState();
-        }
         return page;
     }).always(function () {
         window.TTTaiga.isInitializing = false;

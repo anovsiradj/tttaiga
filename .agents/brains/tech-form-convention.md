@@ -34,7 +34,9 @@
 - Login test: DEBUG_USERNAME/DEBUG_PASSWORD di .env, server "Jeemce"
 
 ## Struktur web/
-- `web/` = salinan lama (stale, file biasa Sep 2025, BUKAN symlink). Root project adalah docroot
-  yang diserve (`APP_URL=http://localhost/tttaiga/`). `app/layouts/main.php`, `app/routes.php`,
-  `app/pages.php` juga tidak dipakai. Edit HANYA di `assets/` dan halaman root; jangan sentuh `web/`.
+- `web/` = salinan lama (stale). `web/assets/` gitignored + di-exclude lewat `.vscode/settings.json`;
+  hanya `web/.htaccess` + `web/index.php` yang ter-track. Root project adalah docroot yang diserve
+  (`APP_URL`/`DEBUG_URL` di `.env`). Edit HANYA di `assets/` dan halaman root; jangan sentuh `web/`.
+- File mati sudah dihapus: `app/layouts/main.php`, `app/routes.php`, `app/pages.php`,
+  `assets/theme.js`, `assets/taiga-ajax.js`.
 - Cache bust: tasks.php pakai `&t=<?php echo time(); ?>`; halaman lain `?v=filemtime()` (cukup, file berubah → version berubah)

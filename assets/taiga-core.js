@@ -247,27 +247,6 @@ window.TTTaiga = { ...window.TTTaiga,
     Filter: {
         read: function () {
             return taigaGetFilterParams();
-        },
-        syncState: function () {
-            if (typeof taigaGetFilterParams !== 'function') return {};
-            const params = taigaGetFilterParams();
-            TTTaiga.State.setState(params);
-            return params;
-        }
-    },
-    State: {
-        subscribers: [],
-        data: JSON.parse(localStorage.getItem('taiga_state')) || {},
-        subscribe: function(callback) {
-            this.subscribers.push(callback);
-        },
-        setState: function(newState) {
-            this.data = { ...this.data, ...newState };
-            localStorage.setItem('taiga_state', JSON.stringify(this.data));
-            this.subscribers.forEach(callback => callback(this.data));
-        },
-        getState: function() {
-            return this.data;
         }
     }
 };
@@ -467,17 +446,16 @@ $(document).ready(function () {
         const url = settings && settings.url ? String(settings.url) : '';
         if (xhr.status === 401 && url.indexOf('api.php') !== -1 && !window.location.pathname.endsWith('login.php')) {
             tttaigaClearAuthState();
-            window.location.href = 'login.php';
         }
     });
 
     $('#logoutBtn').on('click', function () {
-        tttaigaClearAuthState();
         $.post('login.php', { action: 'logout' }).always(function () {
-            window.location.href = 'login.php';
+            tttaigaClearAuthState();
         });
     });
 });
 
 function tttaigaClearAuthState() {
+    window.location.href = 'login.php';
 }

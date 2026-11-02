@@ -6,8 +6,8 @@ trigger: always_on
 i am using windows, when you need to execute CLI commands, dont use bash CLI commands, use powershell CLI commands.
 
 # server
-this project is already running under apache server withing subfolder,
-the URL access is at <http://localhost:8400/anoop/tttaiga/>.
+this project is already running under apache, served from the repo root as docroot.
+the URL access is defined in `.env` (`APP_URL` / `DEBUG_URL`), e.g. <http://localhost/tttaiga/>.
 
 # terminologies
 - Epic is "Epik"

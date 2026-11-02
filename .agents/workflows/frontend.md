@@ -6,10 +6,13 @@ description: Taiga API workflow (frontend)
 
 Frontend calls the Taiga API through the local proxy (`api.php`) using jQuery AJAX. Shared UI helpers live in `assets/taiga.js`.
 
-## Globals (from `assets/app.js`)
-- `window.taigaToken`: Taiga auth token (from `localStorage.taiga_token`)
-- `window.apiUrl`: Taiga API base URL (from `localStorage.taiga_api_url`)
-- `window.taigaModel`: Current user model (from `localStorage.taiga_user`)
+## Globals (dari `window.TTTaigaSession`, di-inject `app/layouts/main_head.php`)
+- `window.TTTaigaSession`: `{ authenticated, user, apiUrl }` dari PHP session
+- `window.taigaToken`: `'session'` bila authenticated (token asli disimpan di PHP session)
+- `window.apiUrl`: Taiga API base URL dari `$_SESSION['taiga_api_url']`
+- `window.taigaModel`: user model dari `$_SESSION['taiga_user']`
+
+Pemetaan session → global dilakukan `assets/taiga-core.js`. `assets/app.js` (versi lama) hanya dimuat `login.php`.
 
 ## Standard Request Pattern
 Use `api.php<endpoint>` and always include these headers:
