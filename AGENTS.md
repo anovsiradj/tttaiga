@@ -11,7 +11,7 @@ Before processing any user request or analyzing code, execute this exact sequenc
 
 # Development Guidelines
 
-## Git, Source Code & Changes
+## Git, Commit & Changes
 
 When creating or amending commits, always append a `Co-Authored-By: {name} <{email}>` trailer at the very end of the message.
 

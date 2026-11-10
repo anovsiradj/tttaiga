@@ -203,16 +203,19 @@ $(document).ready(function () {
                     projectSel: '#singleIsuProject',
                     statusSel: '#singleIsuStatus',
                     statusType: 'issue',
-                    assigneeSel: '#singleIsuAssignee'
+                    assigneeSel: '#singleIsuAssignee',
+                    typeSel: '#singleIsuType',
+                    prioritySel: '#singleIsuPriority',
+                    severitySel: '#singleIsuSeverity'
                 }, {
                     project: issue.project,
                     status: issue.status,
                     assigned_to: issue.assigned_to,
-                    project_label: issue.project_extra_info ? issue.project_extra_info.name : null
+                    project_label: issue.project_extra_info ? issue.project_extra_info.name : null,
+                    type: issue.issue_type,
+                    priority: issue.priority,
+                    severity: issue.severity
                 });
-                if (issue.issue_type) $('#singleIsuType').val(issue.issue_type);
-                if (issue.priority) $('#singleIsuPriority').val(issue.priority);
-                if (issue.severity) $('#singleIsuSeverity').val(issue.severity);
             }
         });
     });

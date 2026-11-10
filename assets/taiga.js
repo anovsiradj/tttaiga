@@ -192,6 +192,19 @@ TTTaiga.BulkUpdate = {
                                 formatText: field.format || function(item) { return item.name || item.subject || item.full_name; },
                                 additionalParams: function() { return projectId ? { project: projectId } : {}; }
                             });
+                        } else if (field.key === 'type' || field.key === 'severity') {
+                            // Custom select fields - initialize with No Change option
+                            if ($el.data('select2')) $el.select2('destroy');
+                            $el.empty();
+                            $el.prop('disabled', !projectId);
+                            $el.append(new Option(projectId ? 'No Change' : '', ''));
+                            $el.select2({
+                                theme: 'bootstrap-5',
+                                width: '100%',
+                                placeholder: projectId ? 'Select ' + field.key : '',
+                                allowClear: true,
+                                dropdownParent: $el.closest('.modal').length && $el.closest('.modal').attr('id') ? $('#' + $el.closest('.modal').attr('id')) : $(document.body)
+                            });
                         }
                     } else if (field.type === 'textarea') {
                         $el.val('');

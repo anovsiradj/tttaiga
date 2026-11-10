@@ -234,6 +234,15 @@ window.TTTaiga = { ...window.TTTaiga,
                     this._populateList(config.epicSel, '/epics', pid, values.epic,
                         (item) => `#${item.ref}: ${item.subject}`, 'Select Epik', values.epic_label);
                 }
+                if (config.typeSel && pid) {
+                    taigaFetchIssueTypes(pid, values.project_extra_info ? values.project_extra_info.name : null, pid, $(config.typeSel), values.type);
+                }
+                if (config.prioritySel && pid) {
+                    taigaFetchPriorities(pid, values.project_extra_info ? values.project_extra_info.name : null, pid, $(config.prioritySel), values.priority);
+                }
+                if (config.severitySel && pid) {
+                    taigaFetchSeverities(pid, values.project_extra_info ? values.project_extra_info.name : null, pid, $(config.severitySel), values.severity);
+                }
                 if (typeof config.onDependentsReady === 'function') config.onDependentsReady(pid);
             }.bind(this);
 
@@ -251,7 +260,139 @@ window.TTTaiga = { ...window.TTTaiga,
     }
 };
 
-// --- Shared Filter Logic ---
+// Helper functions for fetching issue types, priorities, severities from Taiga API
+    function taigaFetchIssueTypes(apiUrl, token, projectId, $select, selectedValue) {
+        $.ajax({
+            url: `api.php/issue-types`,
+            data: { project: projectId },
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'X-Taiga-Api-Url': apiUrl
+            }
+        }).done(function (types) {
+            if ($select.data('select2')) $select.select2('destroy');
+            let html = '<option value="">Select Type</option>';
+            if (Array.isArray(types)) {
+                types.forEach(type => {
+                    html += `<option value="${type.id}">${type.name}</option>`;
+                });
+            }
+            $select.html(html);
+            $select.prop('disabled', false);
+            $select.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Select Type',
+                allowClear: true,
+                dropdownParent: $select.closest('.modal').length && $select.closest('.modal').attr('id') ? $('#' + $select.closest('.modal').attr('id')) : $(document.body)
+            });
+            if (selectedValue && $select.find('option[value="' + String(selectedValue) + '"]').length) {
+                $select.val(String(selectedValue));
+            }
+        })
+        .fail(function () {
+            if ($select.data('select2')) $select.select2('destroy');
+            $select.html('<option value="">Error loading types</option>').prop('disabled', true);
+            $select.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Error loading types',
+                allowClear: true
+            });
+        });
+    }
+
+    function taigaFetchPriorities(apiUrl, token, projectId, $select, selectedValue) {
+        $.ajax({
+            url: `api.php/priorities`,
+            data: { project: projectId },
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'X-Taiga-Api-Url': apiUrl
+            }
+        }).done(function (priorities) {
+            if ($select.data('select2')) $select.select2('destroy');
+            let html = '<option value="">Select Priority</option>';
+            if (Array.isArray(priorities)) {
+                priorities.forEach(prio => {
+                    html += `<option value="${prio.id}">${prio.name}</option>`;
+                });
+            }
+            $select.html(html);
+            $select.prop('disabled', false);
+            $select.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Select Priority',
+                allowClear: true,
+                dropdownParent: $select.closest('.modal').length && $select.closest('.modal').attr('id') ? $('#' + $select.closest('.modal').attr('id')) : $(document.body)
+            });
+            if (selectedValue && $select.find('option[value="' + String(selectedValue) + '"]').length) {
+                $select.val(String(selectedValue));
+            }
+        })
+        .fail(function () {
+            if ($select.data('select2')) $select.select2('destroy');
+            $select.html('<option value="">Error loading priorities</option>').prop('disabled', true);
+            $select.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Error loading priorities',
+                allowClear: true
+            });
+        });
+    }
+
+    function taigaFetchSeverities(apiUrl, token, projectId, $select, selectedValue) {
+        $.ajax({
+            url: `api.php/severities`,
+            data: { project: projectId },
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'X-Taiga-Api-Url': apiUrl
+            }
+        }).done(function (severities) {
+            if ($select.data('select2')) $select.select2('destroy');
+            let html = '<option value="">Select Severity</option>';
+            if (Array.isArray(severities)) {
+                severities.forEach(sev => {
+                    html += `<option value="${sev.id}">${sev.name}</option>`;
+                });
+            }
+            $select.html(html);
+            $select.prop('disabled', false);
+            $select.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Select Severity',
+                allowClear: true,
+                dropdownParent: $select.closest('.modal').length && $select.closest('.modal').attr('id') ? $('#' + $select.closest('.modal').attr('id')) : $(document.body)
+            });
+            if (selectedValue && $select.find('option[value="' + String(selectedValue) + '"]').length) {
+                $select.val(String(selectedValue));
+            }
+        })
+        .fail(function () {
+            if ($select.data('select2')) $select.select2('destroy');
+            $select.html('<option value="">Error loading severities</option>').prop('disabled', true);
+            $select.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Error loading severities',
+                allowClear: true
+            });
+        });
+    }
+    // --- Shared Filter Logic ---
 //
 // Filter dipersist antar modul list lewat sessionStorage + URL.
 // Setiap modul punya whitelist key sendiri supaya filter yang context-specific

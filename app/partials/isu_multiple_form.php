@@ -91,6 +91,24 @@
 						</div>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="mb-3">
+							<label for="bulkUpdateIssueType" class="form-label">Type</label>
+							<select class="form-select" id="bulkUpdateIssueType" data-field="type">
+								<option value="">No Change</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="mb-3">
+							<label for="bulkUpdateIssueSeverity" class="form-label">Severity</label>
+							<select class="form-select" id="bulkUpdateIssueSeverity" data-field="severity">
+								<option value="">No Change</option>
+							</select>
+						</div>
+					</div>
+				</div>
 
 				<div class="alert alert-warning">
 					<i class="bi bi-exclamation-triangle-fill me-2"></i>
