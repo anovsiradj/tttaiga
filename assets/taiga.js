@@ -900,7 +900,10 @@ function taigaBindFilters(onFilterChange) {
 				if (Array.isArray(users)) {
 					users.forEach(u => {
 						const name = u.full_name || u.user_email || u.username || 'Unknown';
-						html += `<option value="${u.id ?? u.user}">${name}</option>`;
+						// Memberships (with project): use 'user' field
+						// Users (no project): use 'id' field
+						const userId = pid ? u.user : u.id;
+						html += `<option value="${userId}">${name}</option>`;
 					});
 				}
 				$assigned.html(html);

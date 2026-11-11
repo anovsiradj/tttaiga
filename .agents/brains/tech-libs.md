@@ -39,5 +39,5 @@ GOAL: develop web-skit as JS/jQuery + Bootstrap 5 widget library alongside tttai
 - HANYA epic/sprint/usor/task/isu di proyek **TTTaiga (ID: 107)** yang boleh disentuh untuk debug/test.
 - DILARANG menyentuh proyek lain (91, 146, dst.) — read-only pun untuk mutasi.
 - DILARANG hapus data tanpa izin eksplisit user.
-- Login live: `DEBUG_USERNAME`/`DEBUG_PASSWORD` di `.env`, proxy `api.php` (session PHP).
+- Login live: `DEBUG_USERNAME`/`DEBUG_PASSWORD` di `.env` (HATI-HATI: nilai password menyertakan tanda kutip literal → strip sebelum POST /auth), proxy `api.php` (session PHP).
 
