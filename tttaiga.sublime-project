@@ -9,7 +9,7 @@
 			],
 		},
 		{
-			"path": "C:\\projects\\anoop\\php-skit",
+			"path": "/home/anoop/works/phpmono/pkgs/php-skit",
 			"folder_exclude_patterns": [
 				"php-skit/tests",
 			],
@@ -21,7 +21,7 @@
 			],
 		},
 		{
-			"path": "C:\\projects\\anoop\\web-skit",
+			"path": "/home/anoop/works/pkgs/web-skit",
 			"folder_exclude_patterns": [
 				"web-skit/tests",
 			],
@@ -33,7 +33,7 @@
 			],
 		},
 		{
-			"path": "C:\\projects\\anoop\\wiet"
+			"path": "/var/www/html/wiet"
 		},
 	],
 }

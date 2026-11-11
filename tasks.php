@@ -18,7 +18,6 @@ require __DIR__ . '/app/init.php';
 		$pageTitle = 'Tasks';
 		$statusType = 'task';
 
-		$searchPlaceholder = 'Search tasks...';
 		$userStorySelect = true;
 		$epicSelect = true;
 		$filterAssignedEnable = true;

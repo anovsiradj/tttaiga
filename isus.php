@@ -17,7 +17,6 @@ require __DIR__ . '/app/init.php';
 		<?php
 		$pageTitle = 'Isu';
 		$statusType = 'issue';
-		$searchPlaceholder = 'Search isus...';
 		$filterAssignedEnable = true;
 		$sortOptions = [
 			'subject' => 'Subject (A-Z)',

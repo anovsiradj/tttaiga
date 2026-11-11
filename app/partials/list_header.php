@@ -11,7 +11,6 @@
 $filterProjectEnable ??= true;
 $filterStatusEnable ??= true;
 $pageTitle ??= '';
-$searchPlaceholder ??= 'Pencarian ...';
 $statusType ??= '';
 
 $hasFilters = $filterProjectEnable
@@ -47,7 +46,7 @@ $hasFilters = $filterProjectEnable
 		<span class="input-group-text bg-transparent border-end-0 text-muted">
 			<i class="bi bi-search"></i>
 		</span>
-		<input type="text" class="form-control border-start-0 ps-0" id="searchInput" placeholder="<?php echo htmlspecialchars($searchPlaceholder, ENT_QUOTES, 'UTF-8'); ?>">
+		<input type="text" class="form-control border-start-0 ps-0" id="searchInput" placeholder="Pencarian ...">
 	</div>
 
 	<?php if (isset($sortOptions) && !empty($sortOptions)) { ?>

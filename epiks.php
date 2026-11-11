@@ -18,7 +18,6 @@ require __DIR__ . '/app/init.php';
 		$statusType = 'epic';
 		$bulkCreateModalId = 'bulkCreateEpicModal';
 		$bulkUpdateModalId = 'bulkUpdateEpicModal';
-		$searchPlaceholder = 'Search epiks...';
 		$filterAssignedEnable = true;
 		$sortOptions = [
 			'subject' => 'Subject (A-Z)',

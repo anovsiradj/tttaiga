@@ -20,7 +20,6 @@ require __DIR__ . '/app/init.php';
 
 
 		$bulkDeleteModalId = 'bulkDeleteModal';
-		$searchPlaceholder = 'Search usors...';
 		$epicSelect = true;
 		$sortOptions = [
 			'subject' => 'Subject (A-Z)',

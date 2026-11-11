@@ -329,7 +329,7 @@ require __DIR__ . '/app/init.php';
 				<div class="planning-panel-header">
 					<div class="input-group search-input">
 						<span class="input-group-text"><i class="bi bi-search"></i></span>
-						<input type="text" class="form-control" id="sourceSearch" placeholder="Search USORs...">
+						<input type="text" class="form-control" id="sourceSearch" placeholder="Pencarian ...">
 					</div>
 					<select class="form-select source-select" id="sourceSelector">
 						<option value="backlog">Backlog (No Sprint)</option>
@@ -368,7 +368,7 @@ require __DIR__ . '/app/init.php';
 				<div class="planning-panel-header">
 					<div class="input-group search-input">
 						<span class="input-group-text"><i class="bi bi-search"></i></span>
-						<input type="text" class="form-control" id="targetSearch" placeholder="Filter sprint USORs...">
+						<input type="text" class="form-control" id="targetSearch" placeholder="Pencarian ...">
 					</div>
 				</div>
 				<div class="planning-panel-header py-2">

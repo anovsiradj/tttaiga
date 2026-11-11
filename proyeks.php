@@ -3,7 +3,6 @@
 require __DIR__ . '/app/init.php';
 
 $pageTitle = 'Proyek';
-$searchPlaceholder = 'Search proyeks...';
 $primaryAction = ''; // No create action for Proyek
 $bulkActions = '
 	<li><a class="dropdown-item tttaiga-bulk-handle tttaiga-bulk-action" href="#" data-bs-toggle="modal" data-bs-target="#bulkUpdateProyekModal"><i class="bi bi-pencil-square me-2"></i> Bulk Prefix</a></li>

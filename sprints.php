@@ -17,7 +17,6 @@ require __DIR__ . '/app/init.php';
 		<?php
 		$pageTitle = 'Sprints';
 		$bulkUpdateModalId = 'bulkUpdateSprintModal';
-		$searchPlaceholder = 'Search sprints...';
 		$filterStatusEnable = false; // We'll handle closed/open filter separately if needed or just use search
 		$sortOptions = [
 			'name' => 'Name (A-Z)',
