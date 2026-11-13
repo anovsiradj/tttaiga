@@ -7,11 +7,11 @@ Before processing any user request or analyzing code, execute this exact sequenc
 2. **APPLY:** Enforce all directives in `BRAINS.md` as non-negotiable system rules for this session.
 3. **PROCEED:** Only after reading `BRAINS.md`, begin executing the user prompt.
 
-*Constraint: Do not skip Step 1. Do not load raw context files in `./.agents/brains/` until `BRAINS.md` logic is initialized.*
-
-# Development Guidelines
+*Constraint: Do not skip Step 1. Do not load raw context files in `./.agents/brains/` until `BRAINS.md` logic is initialized.*# Development Guidelines
 
 ## Git, Commit & Changes
+
+Do not run any git commit, push, or pull unless explicitly instructed.
 
 When creating or amending commits, always append a `Co-Authored-By: {name} <{email}>` trailer at the very end of the message.
 
