@@ -42,6 +42,10 @@ $(document).ready(function () {
                             </div>
                             <h6 class="card-title text-truncate">${proyek.name}</h6>
                             <div class="card-text taiga-card-description text-muted small mb-0">${proyek.description ? taigaRenderContent(proyek.description) : ''}</div>
+                            <div class="taiga-card-meta mt-2 d-flex justify-content-between">
+                                <small class="text-muted text-truncate">Created: <strong>${taigaFormatDateCard(proyek.created_date)}</strong></small>
+                                <small class="text-muted text-truncate">Modified: <strong>${taigaFormatDateCard(proyek.modified_date)}</strong></small>
+                            </div>
                         </div>
                         <div class="card-footer taiga-card-actions">
                             <a href="${taigaItemPermalink('project', proyek, window.apiUrl) || '#'}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">Taiga</a>

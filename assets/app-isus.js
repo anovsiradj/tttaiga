@@ -59,8 +59,10 @@ $(document).ready(function () {
                             </div>
                             <h6 class="card-title text-truncate">${issue.subject || 'Untitled Isu'}</h6>
                             <div class="card-text text-muted taiga-card-description small mb-0">${issue.description ? taigaRenderContent(issue.description) : ''}</div>
-                            <div class="taiga-card-meta">
-                                <small class="text-muted d-block text-truncate">Assigned: <strong>${assignedTo}</strong></small>
+                            <div class="taiga-card-meta d-flex justify-content-between">
+                                <small class="text-muted text-truncate">Assigned: <strong>${assignedTo}</strong></small>
+                                <small class="text-muted text-truncate">Created: <strong>${taigaFormatDateCard(issue.created_date)}</strong></small>
+                                <small class="text-muted text-truncate">Modified: <strong>${taigaFormatDateCard(issue.modified_date)}</strong></small>
                             </div>
                         </div>
                         <div class="card-footer taiga-card-actions">

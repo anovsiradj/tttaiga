@@ -7,6 +7,30 @@
     if (!globalThis.apiUrl) globalThis.apiUrl = session.apiUrl || null;
 })();
 
+// --- Date Formatting for Cards ---
+// Format: yyyy/mm/dd with Bootstrap tooltip showing raw value
+
+function taigaFormatDateCard(value) {
+    if (!value) return '';
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return String(value);
+    // Format as yyyy/mm/dd
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const shortDate = `${year}/${month}/${day}`;
+    // Bootstrap tooltip with RAW value from API (always top)
+    const rawValue = taigaEscapeHtml(String(value));
+    return `<span class="taiga-date-card" data-bs-toggle="tooltip" data-bs-placement="top" title="${rawValue}">${shortDate}</span>`;
+}
+
+function taigaFormatDateTime(value) {
+    if (!value) return '';
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return String(value);
+    return d.toLocaleString();
+}
+
 window.TTTaiga = { ...window.TTTaiga,
     API: {
         _clearAuth: function () {
@@ -600,3 +624,21 @@ $(document).ready(function () {
 function tttaigaClearAuthState() {
     window.location.href = 'login.php';
 }
+
+// Initialize Bootstrap tooltips for date cards
+function taigaInitTooltips() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+}
+
+// Auto-init tooltips on DOM ready and after AJAX content loads
+$(document).ready(function () {
+    taigaInitTooltips();
+});
+
+// Re-init tooltips after content is rendered via AJAX
+$(document).ajaxComplete(function () {
+    taigaInitTooltips();
+});

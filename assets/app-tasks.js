@@ -73,8 +73,11 @@ $(document).ready(function () {
                             <h6 class="card-title text-truncate">${task.subject || 'Untitled Task'}</h6>
                             <div class="card-text taiga-card-description task-description text-muted small mb-0">${task.description ? taigaRenderContent(task.description) : ''}</div>
                             <div class="taiga-card-meta">
-                                <small class="text-muted d-block text-truncate">Assigned: <strong>${assignedTo}</strong></small>
-                                ${usorHtml}
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted text-truncate">Assigned: <strong>${assignedTo}</strong></small>
+                                    <small class="text-muted text-truncate">Created: <strong>${taigaFormatDateCard(task.created_date)}</strong></small>
+                                </div>
+                                ${usorHtml ? `<div class="d-flex justify-content-between"><small class="text-muted text-truncate">${usorHtml}</small><small class="text-muted text-truncate">Modified: <strong>${taigaFormatDateCard(task.modified_date)}</strong></small></div>` : `<div class="d-flex justify-content-between"><small class="text-muted text-truncate"></small><small class="text-muted text-truncate">Modified: <strong>${taigaFormatDateCard(task.modified_date)}</strong></small></div>`}
                             </div>
                         </div>
                         <div class="card-footer taiga-card-actions">

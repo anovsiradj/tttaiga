@@ -43,6 +43,16 @@ $(document).ready(function () {
                             </div>
                             <h6 class="card-title text-truncate">${sprint.name || 'Untitled Sprint'}</h6>
                             <div class="card-text taiga-card-description text-muted small mb-0">${sprint.description ? taigaRenderContent(sprint.description) : ''}</div>
+                            <div class="taiga-card-meta mt-2">
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted text-truncate">Start: <strong>${taigaFormatDateCard(sprint.estimated_start)}</strong></small>
+                                    <small class="text-muted text-truncate">Finish: <strong>${taigaFormatDateCard(sprint.estimated_finish)}</strong></small>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted text-truncate">Created: <strong>${taigaFormatDateCard(sprint.created_date)}</strong></small>
+                                    <small class="text-muted text-truncate">Modified: <strong>${taigaFormatDateCard(sprint.modified_date)}</strong></small>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer taiga-card-actions">
                             <a href="${taigaItemPermalink('sprint', sprint, window.apiUrl) || '#'}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">Taiga</a>
