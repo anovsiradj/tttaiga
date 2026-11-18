@@ -21,7 +21,14 @@
         },
         {
             "type": "path",
-            "url": "/home/anoop/works/phpmono/pkgs/php-skit",
+            "url": "/srv/phpmono/pkgs/php-cutter",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "/srv/phpmono/pkgs/php-skit",
             "options": {
                 "symlink": true
             }
@@ -42,6 +49,7 @@
     "require": {
         "php": ">=8.4",
         "anovsiradj/wiet": "@dev",
+        "anovsiradj/php-cutter": "@dev",
         "anovsiradj/php-skit": "@dev",
         "anovsiradj/web-skit": "@dev",
         "symfony/var-dumper": "@stable",

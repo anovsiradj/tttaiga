@@ -1,11 +1,16 @@
 {
-  "name": "tttaiga-browser-tests",
+  "name": "@anovsiradj/tttaiga",
+  "type": "module",
+
   "private": true,
   "scripts": {
     "test:browser": "playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1",
-    "jquery": "3.6.0"
+    "@playwright/test": "^1.65.0"
+  },
+  "dependencies": {
+    "bootstrap": "~5.3.9",
+    "jquery": "~4.0.0"
   }
 }

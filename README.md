@@ -48,3 +48,8 @@ karena belum pakai `deno bundle` jadi untuk sekarang pakai symlink dulu.
 ```sh
 New-Item -ItemType Junction -Path "C:\projects\anoop\tttaiga\web\assets" -Value "C:\projects\anoop\tttaiga\assets"
 ```
+
+## Todos
+
+- cari komen semua modul yg bisa dikasih komen
+- 
