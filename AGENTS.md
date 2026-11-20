@@ -52,8 +52,6 @@ Focus solely on completing your own commit.
 - jangan menjalankan local server secara manual, karena sudah disediakan, untuk mengetahuinya URL nya, cek `DEBUG_URL` di `.env`.
 - jika lokal server belum tersedia, kamu harus minta aku untuk menjalankannya, jangan menjalankannya sendiri.
 - untuk kredensial login, cek `DEBUG_*` di `.env`.
-- untuk menjalankan perintah PHP gunakan `php84`.
-- untuk menjalankan perintah composer gunakan `php84c`.
 
 ## jenis/fitur/modul
 - user

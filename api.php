@@ -311,7 +311,7 @@ function tttaigaProxyEmitTransportError(\anovsiradj\skit\CURL $curl, string $tar
 		'curl_errno' => $curl->errno,
 		'curl_error' => $curl->error,
 		'http_status' => $statusCode,
-		'upstream_url' => \anovsiradj\skit\CURL::redactUrl($targetUrl),
+		'upstream_url' => $targetUrl,
 	];
 
 	echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

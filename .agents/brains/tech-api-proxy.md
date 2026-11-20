@@ -7,7 +7,7 @@
 ## Transport error TIDAK dibungkus generic
 
 - SEBELUMNYA: curl gagal → `{"error":"Proxy error"}` (HTTP 502), sebabnya tersembunyi.
-- SEKARANG: `tttaigaProxyEmitTransportError()` (inline di api.php) → 502 + JSON `{error, curl_errno, curl_error, http_status, upstream_url(redacted)}`. Dipanggil HANYA saat cURL tidak mengembalikan body sama sekali; response dengan body tetap di-echo apa adanya oleh jalur utama.
+- SEKARANG: `tttaigaProxyEmitTransportError()` (inline di api.php) → 502 + JSON `{error, curl_errno, curl_error, http_status, upstream_url}` — URL **as-is** (tanpa `redactUrl()`, sesuai request user). Dipanggil HANYA saat cURL tidak mengembalikan body sama sekali; response dengan body tetap di-echo apa adanya oleh jalur utama.
 - Helper lain `tttaigaProxyEmitUpstreamError()` sudah forward raw body apa adanya — jangan diganti generic.
 
 ## Root cause insiden 2026-11-20 (sudah fix di sisi environment)
