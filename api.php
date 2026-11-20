@@ -200,9 +200,7 @@ if (!$isAuthRequest && $statusCode === 401) {
 }
 
 if ($responseBody === false || $responseBody === null) {
-	http_response_code(502);
-	header('Content-Type: application/json');
-	echo json_encode(['error' => 'Proxy error']);
+	tttaigaProxyEmitTransportError($curl, $targetUrl, $statusCode);
 	exit();
 }
 
@@ -294,6 +292,29 @@ function tttaigaProxyEmitUpstreamError(array $response, string $fallback): void
 	}
 
 	exit;
+}
+
+/**
+ * Surface the real transport failure instead of a generic "Proxy error".
+ *
+ * Only called when cURL returned no body at all, so there is nothing upstream
+ * to forward verbatim here. Responses that do have a body are echoed as-is by
+ * the main path below.
+ */
+function tttaigaProxyEmitTransportError(\anovsiradj\skit\CURL $curl, string $targetUrl, int $statusCode): void
+{
+	http_response_code(502);
+	header('Content-Type: application/json');
+
+	$payload = [
+		'error' => 'Proxy error: upstream request failed',
+		'curl_errno' => $curl->errno,
+		'curl_error' => $curl->error,
+		'http_status' => $statusCode,
+		'upstream_url' => \anovsiradj\skit\CURL::redactUrl($targetUrl),
+	];
+
+	echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 }
 
 /**

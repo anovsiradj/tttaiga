@@ -137,7 +137,7 @@ $(document).ready(function () {
                     $btn.prop('disabled', false).text('Create Sprints');
                     $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                     TTTaiga.UI.notify(`Created ${createdCount} sprints, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
-                    if (errorCount === 0) { $('#bulkCreateSprintModal').modal('hide'); TTTaiga.Sprints.load(); }
+                    if (errorCount === 0) { $('#bulkCreateSprintModal').modal('hide'); taigaClearSelect2Cache(); TTTaiga.Sprints.load(); }
                 }
             }
         },
@@ -165,7 +165,7 @@ $(document).ready(function () {
                 $btn.prop('disabled', false).text('Update Sprints');
                 $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Updated ${successCount} sprints, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
-                if (errorCount === 0) { $('#bulkUpdateSprintModal').modal('hide'); TTTaiga.Sprints.load(); }
+                if (errorCount === 0) { $('#bulkUpdateSprintModal').modal('hide'); taigaClearSelect2Cache(); TTTaiga.Sprints.load(); }
             }, { showProgress: true });
         },
         deleteBulk: function() {
@@ -195,7 +195,7 @@ $(document).ready(function () {
                 $btn.prop('disabled', false).text('Delete Sprints');
                 $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} sprints, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
-                if (errorCount === 0) { $('#bulkDeleteSprintModal').modal('hide'); TTTaiga.Sprints.load(); }
+                if (errorCount === 0) { $('#bulkDeleteSprintModal').modal('hide'); taigaClearSelect2Cache(); TTTaiga.Sprints.load(); }
             }, { showProgress: true });
         }
     };

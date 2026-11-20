@@ -146,6 +146,7 @@ $(document).ready(function () {
                     TTTaiga.UI.notify(`Created ${createdCount} usors, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) {
                         $('#bulkCreateModal').modal('hide');
+                        taigaClearSelect2Cache();
                         TTTaiga.Usors.load();
                     }
                 }
@@ -173,6 +174,7 @@ $(document).ready(function () {
                 TTTaiga.UI.notify(`Deleted ${successCount} usors, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                 if (errorCount === 0) {
                     $('#bulkDeleteModal').modal('hide');
+                    taigaClearSelect2Cache();
                     TTTaiga.Usors.load();
                 }
             }, { showProgress: true });

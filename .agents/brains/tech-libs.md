@@ -6,6 +6,7 @@ STATUS: active development, minimal skeleton
 CURRENT: `App.php` — abstract bootstrap placeholder (empty body)
 ENTRIES: functs, helpers (Date/Intl/Letter/Number/Roman/Time), spreadsheet, tests
 USAGE IN TTTaiga: `app/helpers/App.php` extends/follows pattern from php-skit's App.
+`anovsiradj\skit\CURL`: verify SSL aktif (VERIFYHOST=2, VERIFYPEER=true) sejak 2026-11-20; caller defaults menang atas static defaults. Waspada `curl.cainfo` stale di FPM → lihat `tech-api-proxy.md`.
 GOAL: develop php-skit alongside tttaiga as PoC.
 
 ## web-skit

@@ -134,6 +134,7 @@ $(document).ready(function () {
                     TTTaiga.UI.notify(`Created ${createdCount} epiks, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) {
                         $('#bulkCreateEpicModal').modal('hide');
+                        taigaClearSelect2Cache();
                         TTTaiga.Epiks.load();
                     }
                 }
@@ -156,7 +157,7 @@ $(document).ready(function () {
                 $btn.prop('disabled', false).text('Delete Epiks');
                 $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} epiks, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
-                if (errorCount === 0) { $('#bulkDeleteEpicModal').modal('hide'); TTTaiga.Epiks.load(); }
+                if (errorCount === 0) { $('#bulkDeleteEpicModal').modal('hide'); taigaClearSelect2Cache(); TTTaiga.Epiks.load(); }
             }, { showProgress: true });
         }
     };

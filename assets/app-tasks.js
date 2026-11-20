@@ -175,6 +175,7 @@ $(document).ready(function () {
                             $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                             TTTaiga.UI.notify(`Successfully created ${createdCount} tasks!`, 'success');
                             $('#bulkCreateTaskModal').modal('hide');
+                            taigaClearSelect2Cache();
                             TTTaiga.Tasks.load();
                         }
                     },
@@ -212,6 +213,7 @@ $(document).ready(function () {
                 if (errorCount === 0) {
                     TTTaiga.UI.notify(`Successfully deleted ${successCount} tasks!`, 'success');
                     $('#bulkDeleteTaskModal').modal('hide');
+                    taigaClearSelect2Cache();
                     TTTaiga.Tasks.load();
                 } else {
                     TTTaiga.UI.notify(`Deleted ${successCount} tasks, but ${errorCount} failed.`, 'danger');

@@ -163,6 +163,8 @@ window.TTTaiga = { ...window.TTTaiga,
                     $form[0].reset();
                     $('#' + prefix + 'Id').val('');
                     $('#' + prefix + 'Version').val('');
+                    // Clear Select2 caches since server data may have changed
+                    if (typeof taigaClearSelect2Cache === 'function') taigaClearSelect2Cache();
                     if (typeof listFn === 'function') listFn();
                 },
                 onError: function (xhr) {

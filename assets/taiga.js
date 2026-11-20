@@ -9,6 +9,18 @@ TTTaiga.selectedItems = {
 };
 
 /**
+ * Select2 AJAX Cache - stores paginated results per endpoint + search term + page
+ * Prevents redundant network requests when reopening dropdowns or scrolling
+ */
+TTTaiga.Select2Cache = {};
+
+/**
+ * Select2 Scroll Position Cache - stores scrollTop per selector
+ * Restores scroll position when dropdown reopens
+ */
+TTTaiga.Select2ScrollCache = {};
+
+/**
  * Selector Grouping — Organized id/class selectors by domain.
  * Reduces repeated DOM lookups and makes selectors easy to maintain.
  *
@@ -299,6 +311,8 @@ TTTaiga.BulkUpdate = {
             if (errorCount === 0) {
                 TTTaiga.UI.notify('Successfully updated ' + successCount + ' ' + cfg.label.toLowerCase() + '!', 'success');
                 $modal.modal('hide');
+                // Clear Select2 caches since server data has changed
+                taigaClearSelect2Cache();
                 if (type === 'tasks') TTTaiga.Tasks.load();
                 else if (type === 'usors') TTTaiga.Usors.load();
                 else if (type === 'epics') TTTaiga.Epiks.load();
@@ -726,6 +740,7 @@ function taigaGetFilterParams() {
 
 /**
  * Initializes a Select2 instance with remote data and infinite scrolling.
+ * Includes client-side AJAX caching and scroll position preservation.
  */
 function taigaInitRemoteSelect2(selector, endpoint, options = {}) {
 	const $el = $(selector);
@@ -734,6 +749,9 @@ function taigaInitRemoteSelect2(selector, endpoint, options = {}) {
 	if ($el.data('select2')) {
 		$el.select2('destroy');
 	}
+
+	// Unique cache key prefix for this selector + endpoint
+	const cachePrefix = selector + '|' + endpoint;
 
 	$el.select2({
 		theme: 'bootstrap-5',
@@ -759,6 +777,28 @@ function taigaInitRemoteSelect2(selector, endpoint, options = {}) {
 				}
 				return query;
 			},
+			// Custom transport with in-memory caching
+			transport: function (params, success, failure) {
+				const term = params.data.q || '';
+				const page = params.data.page || 1;
+				// Include additional params in cache key for context-specific filtering
+				const additionalParams = typeof options.additionalParams === 'function' ? options.additionalParams() : {};
+				const additionalKey = JSON.stringify(additionalParams);
+				const cacheKey = cachePrefix + '|' + term + '|' + page + '|' + additionalKey;
+
+				if (TTTaiga.Select2Cache[cacheKey]) {
+					success(TTTaiga.Select2Cache[cacheKey]);
+					return;
+				}
+
+				const request = $.ajax(params);
+				request.then(function (data) {
+					TTTaiga.Select2Cache[cacheKey] = data;
+					success(data);
+				}).fail(failure);
+
+				return request;
+			},
 			processResults: function (data, params) {
 				params.page = params.page || 1;
 				return {
@@ -778,6 +818,47 @@ function taigaInitRemoteSelect2(selector, endpoint, options = {}) {
 		width: '100%',
 		dropdownParent: options.dropdownParent || (() => { const m = $el.closest('.modal'); return m.length && m.attr('id') ? $('#' + m.attr('id')) : $(document.body); })()
 	});
+
+	// Preserve scroll position when dropdown closes and restore on reopen
+	// Use namespaced events to avoid duplicates when select2 is destroyed/reinitialized
+	$el.off('select2:closing.select2scroll select2:open.select2scroll')
+		.on('select2:closing.select2scroll', function () {
+			const $results = $('.select2-results__options');
+			if ($results.length) {
+				TTTaiga.Select2ScrollCache[selector] = $results.scrollTop();
+			}
+		})
+		.on('select2:open.select2scroll', function () {
+			const scrollTop = TTTaiga.Select2ScrollCache[selector];
+			if (scrollTop !== undefined) {
+				setTimeout(function () {
+					$('.select2-results__options').scrollTop(scrollTop);
+				}, 0);
+			}
+		});
+}
+
+/**
+ * Clears Select2 AJAX and Scroll caches.
+ * Call this when server-side data changes (create/update/delete) to prevent stale cached results.
+ * @param {string} [selector] - Optional specific selector to clear. If omitted, clears all.
+ * @param {string} [endpoint] - Optional specific endpoint to clear. If omitted, clears all.
+ */
+function taigaClearSelect2Cache(selector, endpoint) {
+	if (!selector && !endpoint) {
+		// Clear all caches
+		TTTaiga.Select2Cache = {};
+		TTTaiga.Select2ScrollCache = {};
+		return;
+	}
+
+	const prefix = (selector || '') + '|' + (endpoint || '');
+	const keysToDelete = Object.keys(TTTaiga.Select2Cache).filter(key => key.startsWith(prefix));
+	keysToDelete.forEach(key => delete TTTaiga.Select2Cache[key]);
+
+	if (selector) {
+		delete TTTaiga.Select2ScrollCache[selector];
+	}
 }
 
 function taigaInitStaticSelect2($el, options = {}) {

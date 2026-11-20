@@ -129,6 +129,7 @@ $(document).ready(function () {
                     TTTaiga.UI.notify(`Created ${createdCount} isus, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
                     if (errorCount === 0) {
                         $('#issueBulkCreateModal').modal('hide');
+                        taigaClearSelect2Cache();
                         TTTaiga.Issues.load();
                     }
                 }
@@ -151,7 +152,7 @@ $(document).ready(function () {
                 $btn.prop('disabled', false).text('Delete Isus');
                 $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
                 TTTaiga.UI.notify(`Deleted ${successCount} isus, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
-                if (errorCount === 0) { $('#issueBulkDeleteModal').modal('hide'); TTTaiga.Issues.load(); }
+                if (errorCount === 0) { $('#issueBulkDeleteModal').modal('hide'); taigaClearSelect2Cache(); TTTaiga.Issues.load(); }
             }, { showProgress: true });
         }
     };
