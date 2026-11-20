@@ -258,6 +258,7 @@ $(document).ready(function () {
             return;
         }
         $('#singleTaskModalLabel').text('Edit Task');
+        $('#singleTaskForm')[0].reset();
         TTTaiga.API.get('api.php/tasks/' + id, {}, {
             success: function (task) {
                 $('#singleTaskId').val(task.id);

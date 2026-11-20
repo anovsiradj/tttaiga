@@ -47,6 +47,12 @@ Satu fungsi untuk semua module & form type. Config = selectors, values = from fi
 Di `taigaPopulateProjectSelect`, `taigaPopulateBulkStatuses`, `taigaPopulateBulkMembers`, `_populateList`:
 `if ($sel.data('select2')) $sel.select2('destroy')` — sebelum ganti options.
 
+## Bulk create: config ≠ payload (WAJIB dua-duanya)
+- `populateDropdowns(config)` cuma mengisi UI. Field baru di modal bulk HARUS:
+  1. didaftarkan di `config` (`usorSel`, `epicChecklist`, dll) → populate + autofill dari shared filter;
+  2. masuk eksplisit di payload `submitBulkCreate()` → kalau tidak, field murni kosmetik.
+- Gejala kalau poin 1 hilang: dropdown kosong + nilai shared filter tidak terpakai (satu akar, dua bug).
+
 ## Prinsip (from user)
 - "Gak usah aneh2, tinggal append `<option>`" — jangan remote select2, jangan fetch individual item, jangan `.val()` di remote select2.
 - "It's just HTML, CSS, JS" — `<option selected>` dan select2 static sudah cukup.

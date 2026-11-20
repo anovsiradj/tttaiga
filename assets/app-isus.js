@@ -159,6 +159,9 @@ $(document).ready(function () {
 
     $('#issueBulkCreateModal').on('show.bs.modal', () => TTTaiga.Issues.populateBulkCreateDropdowns());
     $('#submitBulkCreateIssues').on('click', () => TTTaiga.Issues.submitBulkCreate());
+    $('#previewBulkCreateIssues').on('click', function () {
+        taigaRenderBulkPreview($('#bulkCreateIssuePreview'), taigaParseBulkLines($('#bulkCreateIssueText').val()), 'subject');
+    });
     $('#issueBulkUpdateModal').on('show.bs.modal', () => TTTaiga.BulkUpdate.open('issues'));
     $('#submitBulkIssueUpdate').on('click', () => TTTaiga.BulkUpdate.submit('issues'));
     $('#confirmBulkDeleteIssues').on('click', () => TTTaiga.Issues.deleteBulk());
@@ -191,11 +194,15 @@ $(document).ready(function () {
                 projectSel: '#singleIsuProject',
                 statusSel: '#singleIsuStatus',
                 statusType: 'issue',
-                assigneeSel: '#singleIsuAssignee'
+                assigneeSel: '#singleIsuAssignee',
+                typeSel: '#singleIsuType',
+                prioritySel: '#singleIsuPriority',
+                severitySel: '#singleIsuSeverity'
             });
             return;
         }
         $('#singleIsuModalLabel').text('Edit Issue');
+        $('#singleIsuForm')[0].reset();
         TTTaiga.API.get('api.php/issues/' + id, {}, {
             success: function (issue) {
                 $('#singleIsuId').val(issue.id);

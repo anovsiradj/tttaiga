@@ -141,33 +141,6 @@ $(document).ready(function () {
                 }
             }
         },
-        submitBulkUpdate: function() {
-            const selectedSprints = [];
-            $('#bulkUpdateSprints option:selected').each(function () {
-                selectedSprints.push({ id: $(this).val(), version: $(this).data('version') });
-            });
-
-            if (selectedSprints.length === 0) { TTTaiga.UI.notify('Please select at least one sprint', 'warning'); return; }
-
-            const updateData = {};
-            const closed = $('#bulkUpdateClosed').val();
-            if (closed !== '') updateData.closed = closed === 'true';
-            const description = $('#bulkUpdateDescription').val().trim();
-            if (description) updateData.description = description;
-
-            if (Object.keys(updateData).length === 0) { TTTaiga.UI.notify('No fields to update', 'warning'); return; }
-
-            const $btn = $('#submitBulkUpdateSprint');
-            $btn.prop('disabled', true).text('Updating...');
-            $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
-
-            taigaExecuteBulkParallel('/milestones/', selectedSprints, 'PATCH', updateData, (successCount, errorCount) => {
-                $btn.prop('disabled', false).text('Update Sprints');
-                $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
-                TTTaiga.UI.notify(`Updated ${successCount} sprints, ${errorCount} failed.`, errorCount === 0 ? 'success' : 'danger');
-                if (errorCount === 0) { $('#bulkUpdateSprintModal').modal('hide'); taigaClearSelect2Cache(); TTTaiga.Sprints.load(); }
-            }, { showProgress: true });
-        },
         deleteBulk: function() {
             const selectedSprints = [];
             $('#sprintsContent input.sprint-checkbox:checked').each(function () {
@@ -217,7 +190,7 @@ $(document).ready(function () {
     });
     $('#singleSprintModal').on('show.bs.modal', function (e) {
         const id = $(e.relatedTarget).data('sprint-id');
-        if (!id) {
+        if (!id || Number(id) <= 0) {
             $('#singleSprintModalLabel').text('Create Sprint');
             $('#singleSprintId').val('');
             $('#singleSprintVersion').val('');
@@ -228,6 +201,7 @@ $(document).ready(function () {
             return;
         }
         $('#singleSprintModalLabel').text('Edit Sprint');
+        $('#singleSprintForm')[0].reset();
         TTTaiga.API.get('api.php/milestones/' + id, {}, {
             success: function (sprint) {
                 $('#singleSprintId').val(sprint.id);

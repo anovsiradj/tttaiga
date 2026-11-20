@@ -28,6 +28,14 @@
 - legacy `assets/taiga.js`: TIDAK ada binding submitSingle*/show.bs.modal/saveModal — aman, jangan tambah di sana
 - `taigaExecuteBulk` (taiga.js:754): PATCH selalu sertakan version; URL `api.php/{endpoint}/{id}` — benar
 
+## BulkUpdate generik: 4 titik harus sinkron (taiga.js:76-327)
+- `config[type]` key === arg `BulkUpdate.open/submit(type)` di app-*.js
+  === arg ke-3 `taigaBindSelectionLogic(..., type)` === key `selectedItems[type]` di render
+- `cfg.modalId` === id modal di partial
+- `cfg.fields[].key` === `data-field` di modal (dua arah: field di config tanpa markup = mati; markup tanpa config = mati)
+- submit selector list di `taiga.js:295` === id tombol submit aktual; `listFn` pakai nama objek yang benar (`TTTaiga.Proyeks`, BUKAN `Projects`)
+- Gejala umum bug sejenis: field ada di UI tapi tidak pernah masuk payload / tidak pernah di-populate.
+
 ## Validasi live (2026-08-20)
 - Task: Edit→Save → `PATCH api.php/tasks/10926` 200, version:1→2, total tidak bertambah
 - Isu: `PATCH api.php/issues/1605` 200 (dua kali)

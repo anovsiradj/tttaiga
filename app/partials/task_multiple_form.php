@@ -131,6 +131,11 @@
 					<div class="form-text">Leave as "No Change" to keep current assignment</div>
 				</div>
 
+				<div class="mb-3">
+					<label for="bulkUpdateTaskDescription" class="form-label">Description</label>
+					<textarea class="form-control" id="bulkUpdateTaskDescription" rows="3" placeholder="Leave empty for no change" data-field="description"></textarea>
+				</div>
+
 				<div class="alert alert-warning">
 					<h6 class="alert-heading">⚠️ Warning</h6>
 					<p class="mb-0">This action will update all selected tasks with the chosen settings. This cannot be undone.</p>

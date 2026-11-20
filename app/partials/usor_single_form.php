@@ -15,8 +15,9 @@
 						<select class="form-select" id="singleUsorProject" required></select>
 					</div>
 					<div class="mb-3">
-						<label class="form-label">Epic</label>
-						<select class="form-select" id="singleUsorEpic"></select>
+						<label class="form-label">Epik</label>
+						<div id="singleUsorEpics" class="border rounded p-2" style="max-height: 140px; overflow-y: auto;"></div>
+						<div class="form-text">Bisa memilih lebih dari satu epik.</div>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Subject</label>
@@ -34,12 +35,6 @@
 						<div class="col-md-6">
 							<label class="form-label">Assigned To</label>
 							<select class="form-select" id="singleUsorAssignee"></select>
-						</div>
-					</div>
-					<div class="row mt-3">
-						<div class="col-md-6">
-							<label class="form-label">Priority</label>
-							<input type="number" class="form-control" id="singleUsorPriority" min="1" max="100">
 						</div>
 					</div>
 				</form>

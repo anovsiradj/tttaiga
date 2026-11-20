@@ -28,17 +28,13 @@
 						</div>
 					</div>
 					<div class="row mt-3">
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<label class="form-label">Assigned To</label>
 							<select class="form-select" id="bulkCreateEpicAssignee"></select>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<label class="form-label">Color (optional)</label>
 							<input type="color" class="form-control form-control-color" id="bulkCreateEpicColor" value="#fd7e14">
-						</div>
-						<div class="col-md-4">
-							<label class="form-label">Priority (optional)</label>
-							<input type="number" class="form-control" id="bulkCreateEpicPriority" min="1" max="100" value="10">
 						</div>
 					</div>
 				</form>
@@ -96,17 +92,6 @@
 							<label class="form-label">Assigned To</label>
 							<select class="form-select" id="bulkUpdateEpicAssignee" data-field="assignee">
 								<option value="">No Change</option>
-							</select>
-						</div>
-						<div class="col-md-4">
-							<label class="form-label">Priority</label>
-							<select class="form-select" id="bulkUpdateEpicPriority" data-field="priority">
-								<option value="">No Change</option>
-								<option value="1">1 - Highest</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5 - Lowest</option>
 							</select>
 						</div>
 					</div>

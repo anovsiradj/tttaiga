@@ -43,8 +43,15 @@ $(document).ready(function () {
                 const assignedTo = usor.assigned_to_extra_info ? usor.assigned_to_extra_info.full_name_display : (usor.assigned_to ? 'User ID: ' + usor.assigned_to : 'Unassigned');
                 const owner = usor.owner_extra_info ? usor.owner_extra_info.full_name_display : 'Unknown';
 
-                const epicInfo = usor.epic_extra_info ? usor.epic_extra_info.subject : (usor.epic ? `Epik #${usor.epic}` : null);
-                const epicHtml = epicInfo ? `<small class="text-muted d-block text-truncate">In Epik: <strong>${epicInfo}</strong></small>` : '';
+                const epics = Array.isArray(usor.epics) ? usor.epics : [];
+                const moreEpics = Math.max(0, epics.length - 1);
+                const firstEpic = epics.length ? epics[0] : null;
+                const epicInfo = firstEpic && firstEpic.subject
+                    ? (firstEpic.ref ? `#${firstEpic.ref}: ${firstEpic.subject}` : firstEpic.subject)
+                    : (usor.epic_extra_info ? usor.epic_extra_info.subject : (usor.epic ? `Epik #${usor.epic}` : null));
+                const epicHtml = epicInfo
+                    ? `<small class="text-muted d-block text-truncate">In Epik: <strong>${epicInfo}</strong>${moreEpics ? ` <span class="badge bg-secondary" title="Masih ada ${moreEpics} epik lain pada usor ini">+${moreEpics} epik</span>` : ''}</small>`
+                    : '';
 
                 html += `
                 <div class="col-md-6 col-lg-4">
@@ -95,7 +102,8 @@ $(document).ready(function () {
                 projectSel: '#bulkCreateProject',
                 statusSel: '#bulkCreateStatus',
                 statusType: 'us',
-                assigneeSel: '#bulkCreateAssignee'
+                assigneeSel: '#bulkCreateAssignee',
+                epicChecklist: '#bulkCreateEpics'
             });
         },
         submitBulkCreate: function() {
@@ -110,6 +118,10 @@ $(document).ready(function () {
                 TTTaiga.UI.notify('Please select a project', 'warning');
                 return;
             }
+
+            const epicIds = $('#bulkCreateEpics input:checked').map(function () {
+                return parseInt($(this).val(), 10);
+            }).get();
 
             const $btn = $('#submitBulkCreate');
             $btn.prop('disabled', true).text('Creating...');
@@ -132,9 +144,21 @@ $(document).ready(function () {
                     subject: story.subject,
                     description: story.description,
                     project: parseInt(projectId),
-                    status: story.status
+                    status: story.status,
+                    ...($('#bulkCreateAssignee').val() ? { assigned_to: parseInt($('#bulkCreateAssignee').val()) } : {})
                 }, {
-                    success: () => { createdCount++; checkFinished(); },
+                    success: function (created) {
+                        if (!created || !created.id) {
+                            errorCount++;
+                            checkFinished();
+                            return;
+                        }
+                        // New story has no epics yet; skip the GET and just add relations.
+                        taigaSyncUserStoryEpics(created.id, epicIds, []).always(function () {
+                            createdCount++;
+                            checkFinished();
+                        });
+                    },
                     onError: () => { errorCount++; checkFinished(); }
                 });
             });
@@ -185,6 +209,11 @@ $(document).ready(function () {
         TTTaiga.Usors.populateBulkCreateDropdowns(); 
     });
     $('#submitBulkCreate').on('click', function() { TTTaiga.Usors.submitBulkCreate(); });
+    $('#previewBulkCreate').on('click', function () {
+        const items = taigaParseBulkLines($('#bulkCreateText').val());
+        $('#bulkCreatePreview').toggleClass('d-none', items.length === 0);
+        taigaRenderBulkPreview($('#previewContent'), items, 'subject');
+    });
     $('#bulkUpdateModal').on('show.bs.modal', function() { TTTaiga.BulkUpdate.open('usors'); });
     $('#submitBulkUpdate').on('click', function() { TTTaiga.BulkUpdate.submit('usors'); });
     $('#confirmBulkDelete').on('click', function() { TTTaiga.Usors.deleteBulk(); });
@@ -199,8 +228,22 @@ $(document).ready(function () {
                 subject: $('#singleUsorSubject').val(),
                 description: $('#singleUsorDescription').val(),
                 status: $('#singleUsorStatus').val() ? parseInt($('#singleUsorStatus').val()) : undefined,
-                assigned_to: $('#singleUsorAssignee').val() ? parseInt($('#singleUsorAssignee').val()) : undefined,
-                epic: $('#singleUsorEpic').val() ? parseInt($('#singleUsorEpic').val()) : undefined
+                assigned_to: $('#singleUsorAssignee').val() ? parseInt($('#singleUsorAssignee').val()) : undefined
+            },
+            onCreated: function (created) {
+                const epicIds = $('#singleUsorEpics input:checked').map(function () {
+                    return parseInt($(this).val(), 10);
+                }).get();
+                if (!created || !created.id) return;
+                return taigaSyncUserStoryEpics(created.id, epicIds, []);
+            },
+            onUpdated: function (updated) {
+                // No checkbox ticked = "No Change" (same convention as bulk update).
+                const epicIds = $('#singleUsorEpics input:checked').map(function () {
+                    return parseInt($(this).val(), 10);
+                }).get();
+                if (!epicIds.length || !updated) return;
+                return taigaSyncUserStoryEpics(updated.id || $('#singleUsorId').val(), epicIds);
             }
         });
     });
@@ -216,13 +259,15 @@ $(document).ready(function () {
                 statusSel: '#singleUsorStatus',
                 statusType: 'us',
                 assigneeSel: '#singleUsorAssignee',
-                epicSel: '#singleUsorEpic'
+                epicChecklist: '#singleUsorEpics'
             });
             return;
         }
         $('#singleUsorModalLabel').text('Edit User Story');
+        $('#singleUsorForm')[0].reset();
         TTTaiga.API.get('api.php/userstories/' + id, {}, {
             success: function (usor) {
+                const epics = Array.isArray(usor.epics) ? usor.epics : [];
                 $('#singleUsorId').val(usor.id);
                 $('#singleUsorVersion').val(usor.version);
                 $('#singleUsorSubject').val(usor.subject);
@@ -232,12 +277,12 @@ $(document).ready(function () {
                     statusSel: '#singleUsorStatus',
                     statusType: 'us',
                     assigneeSel: '#singleUsorAssignee',
-                    epicSel: '#singleUsorEpic'
+                    epicChecklist: '#singleUsorEpics'
                 }, {
                     project: usor.project,
                     status: usor.status,
                     assigned_to: usor.assigned_to,
-                    epic: usor.epic,
+                    epics: epics.length ? epics.map((e) => e.id) : (usor.epic ? [usor.epic] : []),
                     project_label: usor.project_extra_info ? usor.project_extra_info.name : null
                 });
             }

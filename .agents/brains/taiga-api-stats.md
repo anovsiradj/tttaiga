@@ -30,6 +30,25 @@ Instance: taiga.jmc.co.id (server 'default' di app/configs/taiga.php). Org: 18 p
 - Taiga TIDAK punya object OKR/quarterly-goal native. Kandidat pemodelan: epics + tags + custom-attributes; atau storage lokal TTTaiga.
 - custom-attributes (us/task/issue/epic): endpoint ada, p107 kosong (belum dipakai org).
 
+## Field support (dokumen API resmi, 2026-11-20)
+- `priority` HANYA di Issues. User story / task / epic TIDAK punya `priority` → jangan kirim/ tampilkan field ini.
+- Epic punya `color` (HEX); US tidak punya.
+- POST `/userstories` MENGABAikan `epic`. Hubungkan SETELAH create via
+  `POST api.php/epics/{epicId}/related_userstories` body `{ epic, user_story: created.id }`.
+  (`saveModal` punya hook `opts.onCreated(created)` untuk ini; dipanggil sebelum listFn.)
+- Lepas relasi: `DELETE api.php/epics/{epicId}/related_userstories/{userStoryId}`.
+- US many-to-many (`epics[]`). Form usor pakai **checkbox epic** (bukan dropdown) —
+  filter toolbar TETAP single `epic` (URL/sessionStorage tidak berubah).
+- Helper `taigaSyncUserStoryEpics(usId, epicIds, currentIds?, addOnly?)` = set-diff:
+  DELETE epic tidak dicentang, POST epic baru. `addOnly=true` → union dengan yang lama.
+  - Single create: `currentIds=[]` (langsung POST tiap centangan).
+  - Single edit: checkbox = set final persis; uncheck = hapus relasi itu.
+  - Bulk update: `addOnly=true`, kosong = "No Change" (tidak bisa hapus epic via bulk).
+- Populate checkbox: `Form.epicChecklist` config → `Form._populateEpicChecklist(container, pid, ids)`
+  (fetch `GET /epics?project=pid`, render pakai jQuery DOM, bukan string HTML).
+- Card list: bila `usor.epics.length > 1`, badge `+N epik` di samping epic pertama.
+- Issue: `issue_type`, `priority`, `severity` valid dan punya endpoint `/issue-types`, `/priorities`, `/severities`.
+
 ## Gotcha env/creds
 
 - `.env` DEBUG_PASSWORD berisi literal `"P@ssw0rd22"` (dgn tanda kutip) → parser env tidak strip; baca manual harus kutip-strip. Login: POST /auth {type:normal} (username ATAU email).

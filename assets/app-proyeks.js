@@ -56,10 +56,10 @@ $(document).ready(function () {
             });
             html += '</div>';
             $('#proyeksContent').html(html);
-            taigaBindSelectionLogic('proyek-checkbox', taigaBulkSelectionCallback, 'proyeks');
+            taigaBindSelectionLogic('proyek-checkbox', taigaBulkSelectionCallback, 'projects');
             $('.proyek-checkbox').each(function() {
                 var id = $(this).val();
-                if (TTTaiga.selectedItems.proyeks.some(i => i.id == id)) {
+                if (TTTaiga.selectedItems.projects.some(i => i.id == id)) {
                     $(this).prop('checked', true);
                     $(this).closest('.card').addClass('taiga-selected');
                 }
@@ -71,8 +71,8 @@ $(document).ready(function () {
         }
     };
 
-    $('#bulkUpdateProyekModal').on('show.bs.modal', () => TTTaiga.BulkUpdate.open('proyeks'));
-    $('#submitBulkProyekUpdate').on('click', () => TTTaiga.BulkUpdate.submit('proyeks'));
+    $('#bulkUpdateProyekModal').on('show.bs.modal', () => TTTaiga.BulkUpdate.open('projects'));
+    $('#submitBulkProyekUpdate').on('click', () => TTTaiga.BulkUpdate.submit('projects'));
 
     taigaBindFilters((page) => TTTaiga.Proyeks.load(page));
     taigaApplyFiltersFromUrl()

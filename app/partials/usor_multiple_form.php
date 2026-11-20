@@ -30,23 +30,17 @@
 						</div>
 						<div class="col-md-6">
 							<label class="form-label">Epik (optional)</label>
-							<select class="form-select" id="bulkCreateEpic">
-								<option value="">Select Epik</option>
-							</select>
+							<div id="bulkCreateEpics" class="border rounded p-2" style="max-height: 140px; overflow-y: auto;"></div>
 						</div>
 					</div>
 					<div class="row mt-3">
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<label class="form-label">Default Status</label>
 							<select class="form-select" id="bulkCreateStatus"></select>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<label class="form-label">Assigned To</label>
 							<select class="form-select" id="bulkCreateAssignee"></select>
-						</div>
-						<div class="col-md-4">
-							<label class="form-label">Priority (optional)</label>
-							<input type="number" class="form-control" id="bulkCreatePriority" min="1" max="100" value="10">
 						</div>
 					</div>
 				</form>
@@ -107,15 +101,9 @@
 							</select>
 						</div>
 						<div class="col-md-4">
-							<label class="form-label">Priority</label>
-							<select class="form-select" id="bulkUpdatePriority" data-field="priority">
-								<option value="">No Change</option>
-								<option value="1">1 - Highest</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5 - Lowest</option>
-							</select>
+							<label class="form-label">Epik</label>
+							<div id="bulkUpdateEpics" data-field="epics" class="border rounded p-2" style="max-height: 140px; overflow-y: auto;"></div>
+							<div class="form-text">Kosong = No Change.</div>
 						</div>
 					</div>
 					<div class="mb-3 mt-3">

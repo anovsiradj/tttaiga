@@ -120,7 +120,8 @@ $(document).ready(function () {
                     subject: epic.subject,
                     description: epic.description || '',
                     status: $('#bulkCreateEpicStatus').val() ? parseInt($('#bulkCreateEpicStatus').val()) : undefined,
-                    assigned_to: $('#bulkCreateEpicAssignee').val() ? parseInt($('#bulkCreateEpicAssignee').val()) : undefined
+                    assigned_to: $('#bulkCreateEpicAssignee').val() ? parseInt($('#bulkCreateEpicAssignee').val()) : undefined,
+                    color: $('#bulkCreateEpicColor').val() || undefined
                 }, {
                     success: () => { createdCount++; checkFinished(); },
                     onError: () => { errorCount++; checkFinished(); }
@@ -171,6 +172,11 @@ $(document).ready(function () {
                 TTTaiga.Epiks.populateBulkCreateDropdowns(); 
             });
             $('#submitBulkCreateEpic').on('click', () => TTTaiga.Epiks.submitBulkCreate());
+            $('#previewBulkCreateEpic').on('click', function () {
+                const items = taigaParseBulkLines($('#bulkCreateEpicText').val());
+                $('#bulkCreateEpicPreview').toggleClass('d-none', items.length === 0);
+                taigaRenderBulkPreview($('#epicPreviewContent'), items, 'subject');
+            });
             $('#bulkUpdateEpicModal').on('show.bs.modal', () => TTTaiga.BulkUpdate.open('epics'));
             $('#submitBulkUpdateEpic').on('click', () => TTTaiga.BulkUpdate.submit('epics'));
             $('#confirmBulkDeleteEpics').on('click', () => TTTaiga.Epiks.deleteBulk());
@@ -185,7 +191,8 @@ $(document).ready(function () {
                         subject: $('#singleEpicSubject').val(),
                         description: $('#singleEpicDescription').val(),
                         status: $('#singleEpicStatus').val() ? parseInt($('#singleEpicStatus').val()) : undefined,
-                        assigned_to: $('#singleEpicAssignee').val() ? parseInt($('#singleEpicAssignee').val()) : undefined
+                        assigned_to: $('#singleEpicAssignee').val() ? parseInt($('#singleEpicAssignee').val()) : undefined,
+                        color: $('#singleEpicColor').val() || undefined
                     }
                 });
             });
@@ -205,12 +212,14 @@ $(document).ready(function () {
                     return;
                 }
                 $('#singleEpicModalLabel').text('Edit Epic');
+                $('#singleEpicForm')[0].reset();
                 TTTaiga.API.get('api.php/epics/' + id, {}, {
                     success: function (epic) {
                         $('#singleEpicId').val(epic.id);
                         $('#singleEpicVersion').val(epic.version);
                         $('#singleEpicSubject').val(epic.subject);
                         $('#singleEpicDescription').val(epic.description);
+                        if (epic.color) $('#singleEpicColor').val(epic.color);
                         TTTaiga.Form.populateDropdowns({
                             projectSel: '#singleEpicProject',
                             statusSel: '#singleEpicStatus',

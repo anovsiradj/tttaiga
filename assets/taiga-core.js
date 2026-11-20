@@ -156,16 +156,28 @@ window.TTTaiga = { ...window.TTTaiga,
             $btn.prop('disabled', true).text('Saving...');
 
             TTTaiga.API.request(method, url, payload, {
-                success: function () {
-                    $btn.prop('disabled', false).text('Save');
-                    $('#' + modalId).modal('hide');
-                    TTTaiga.UI.notify(id ? 'Updated successfully' : 'Created successfully', 'success');
-                    $form[0].reset();
-                    $('#' + prefix + 'Id').val('');
-                    $('#' + prefix + 'Version').val('');
-                    // Clear Select2 caches since server data may have changed
-                    if (typeof taigaClearSelect2Cache === 'function') taigaClearSelect2Cache();
-                    if (typeof listFn === 'function') listFn();
+                success: function (created) {
+                    const finish = function () {
+                        $btn.prop('disabled', false).text('Save');
+                        $('#' + modalId).modal('hide');
+                        TTTaiga.UI.notify(id ? 'Updated successfully' : 'Created successfully', 'success');
+                        $form[0].reset();
+                        $('#' + prefix + 'Id').val('');
+                        $('#' + prefix + 'Version').val('');
+                        // Clear Select2 caches since server data may have changed
+                        if (typeof taigaClearSelect2Cache === 'function') taigaClearSelect2Cache();
+                        if (typeof listFn === 'function') listFn();
+                    };
+                    // Taiga ignores `epic` on POST/PATCH /userstories; callers use the
+                    // relation endpoint before refreshing the list.
+                    const isCreate = !id || Number(id) <= 0;
+                    if (isCreate && typeof opts.onCreated === 'function') {
+                        $.when(opts.onCreated(created)).always(finish);
+                    } else if (!isCreate && typeof opts.onUpdated === 'function') {
+                        $.when(opts.onUpdated(created)).always(finish);
+                    } else {
+                        finish();
+                    }
                 },
                 onError: function (xhr) {
                     $btn.prop('disabled', false).text('Save');
@@ -184,6 +196,40 @@ window.TTTaiga = { ...window.TTTaiga,
                 } else {
                     $el.val(data[key]);
                 }
+            });
+        },
+        /** Render checkboxes for Taiga's many-to-many epic relation. */
+        _renderEpicChecklist: function (container, epics, selectedIds) {
+            const $c = $(container);
+            if (!$c.length) return;
+            const selected = new Set((selectedIds || []).map(String));
+            $c.empty();
+            if (!Array.isArray(epics) || !epics.length) {
+                $c.append($('<div class="text-muted small"></div>').text('Tidak ada epik di project ini.'));
+                return;
+            }
+            epics.forEach((epic) => {
+                const $label = $('<label class="form-check"></label>');
+                const $input = $('<input class="form-check-input" type="checkbox"></input>')
+                    .val(String(epic.id))
+                    .prop('checked', selected.has(String(epic.id)));
+                $label.append($input).append(
+                    $('<span class="form-check-label"></span>').text(
+                        epic.ref ? `#${epic.ref}: ${epic.subject}` : (epic.subject || `Epik ${epic.id}`)
+                    )
+                );
+                $c.append($label);
+            });
+        },
+        _populateEpicChecklist: function (container, pid, selectedIds) {
+            const $c = $(container);
+            if (!$c.length) return;
+            if (!pid) {
+                $c.empty().append($('<div class="text-muted small"></div>').text('Pilih project dulu untuk memuat epik.'));
+                return;
+            }
+            TTTaiga.API.get('api.php/epics', { project: pid }, {
+                success: (epics) => this._renderEpicChecklist(container, epics, selectedIds)
             });
         },
         _populateList: function (selector, endpoint, pid, selectedValue, formatFn, placeholder, selectedLabel) {
@@ -234,11 +280,6 @@ window.TTTaiga = { ...window.TTTaiga,
                 const $fo = $('#userStorySelect option:selected');
                 values.user_story_label = $fo.length && $fo.val() ? $fo.text() : values.user_story;
             }
-            if (values.epic && !values.epic_label) {
-                const $fo = $('#epicSelect option:selected');
-                values.epic_label = $fo.length && $fo.val() ? $fo.text() : values.epic;
-            }
-
             const refreshDependents = function (pid) {
                 if (config.statusSel && config.statusType) {
                     taigaPopulateBulkStatuses(config.statusType, $(config.statusSel), pid,
@@ -256,18 +297,18 @@ window.TTTaiga = { ...window.TTTaiga,
                     this._populateList(config.sprintSel, '/milestones', pid, values.milestone,
                         (item) => item.name, 'Select Sprint', values.milestone_label);
                 }
-                if (config.epicSel) {
-                    this._populateList(config.epicSel, '/epics', pid, values.epic,
-                        (item) => `#${item.ref}: ${item.subject}`, 'Select Epik', values.epic_label);
+                if (config.epicChecklist) {
+                    this._populateEpicChecklist(config.epicChecklist, pid,
+                        values.epics || (values.epic ? [values.epic] : []));
                 }
                 if (config.typeSel && pid) {
-                    taigaFetchIssueTypes(pid, values.project_extra_info ? values.project_extra_info.name : null, pid, $(config.typeSel), values.type);
+                    taigaFetchIssueTypes(window.apiUrl, window.taigaToken, pid, $(config.typeSel), values.type);
                 }
                 if (config.prioritySel && pid) {
-                    taigaFetchPriorities(pid, values.project_extra_info ? values.project_extra_info.name : null, pid, $(config.prioritySel), values.priority);
+                    taigaFetchPriorities(window.apiUrl, window.taigaToken, pid, $(config.prioritySel), values.priority);
                 }
                 if (config.severitySel && pid) {
-                    taigaFetchSeverities(pid, values.project_extra_info ? values.project_extra_info.name : null, pid, $(config.severitySel), values.severity);
+                    taigaFetchSeverities(window.apiUrl, window.taigaToken, pid, $(config.severitySel), values.severity);
                 }
                 if (typeof config.onDependentsReady === 'function') config.onDependentsReady(pid);
             }.bind(this);
@@ -287,7 +328,7 @@ window.TTTaiga = { ...window.TTTaiga,
 };
 
 // Helper functions for fetching issue types, priorities, severities from Taiga API
-    function taigaFetchIssueTypes(apiUrl, token, projectId, $select, selectedValue) {
+    function taigaFetchIssueTypes(apiUrl, token, projectId, $select, selectedValue, placeholder = 'Select Type') {
         $.ajax({
             url: `api.php/issue-types`,
             data: { project: projectId },
@@ -300,7 +341,7 @@ window.TTTaiga = { ...window.TTTaiga,
             }
         }).done(function (types) {
             if ($select.data('select2')) $select.select2('destroy');
-            let html = '<option value="">Select Type</option>';
+            let html = `<option value="">${placeholder}</option>`;
             if (Array.isArray(types)) {
                 types.forEach(type => {
                     html += `<option value="${type.id}">${type.name}</option>`;
@@ -311,7 +352,7 @@ window.TTTaiga = { ...window.TTTaiga,
             $select.select2({
                 theme: 'bootstrap-5',
                 width: '100%',
-                placeholder: 'Select Type',
+                placeholder: placeholder,
                 allowClear: true,
                 dropdownParent: $select.closest('.modal').length && $select.closest('.modal').attr('id') ? $('#' + $select.closest('.modal').attr('id')) : $(document.body)
             });
@@ -321,7 +362,7 @@ window.TTTaiga = { ...window.TTTaiga,
         })
         .fail(function () {
             if ($select.data('select2')) $select.select2('destroy');
-            $select.html('<option value="">Error loading types</option>').prop('disabled', true);
+            $select.html(`<option value="">Error loading ${placeholder}</option>`).prop('disabled', true);
             $select.select2({
                 theme: 'bootstrap-5',
                 width: '100%',
@@ -331,7 +372,7 @@ window.TTTaiga = { ...window.TTTaiga,
         });
     }
 
-    function taigaFetchPriorities(apiUrl, token, projectId, $select, selectedValue) {
+    function taigaFetchPriorities(apiUrl, token, projectId, $select, selectedValue, placeholder = 'Select Priority') {
         $.ajax({
             url: `api.php/priorities`,
             data: { project: projectId },
@@ -344,7 +385,7 @@ window.TTTaiga = { ...window.TTTaiga,
             }
         }).done(function (priorities) {
             if ($select.data('select2')) $select.select2('destroy');
-            let html = '<option value="">Select Priority</option>';
+            let html = `<option value="">${placeholder}</option>`;
             if (Array.isArray(priorities)) {
                 priorities.forEach(prio => {
                     html += `<option value="${prio.id}">${prio.name}</option>`;
@@ -355,7 +396,7 @@ window.TTTaiga = { ...window.TTTaiga,
             $select.select2({
                 theme: 'bootstrap-5',
                 width: '100%',
-                placeholder: 'Select Priority',
+                placeholder: placeholder,
                 allowClear: true,
                 dropdownParent: $select.closest('.modal').length && $select.closest('.modal').attr('id') ? $('#' + $select.closest('.modal').attr('id')) : $(document.body)
             });
@@ -365,7 +406,7 @@ window.TTTaiga = { ...window.TTTaiga,
         })
         .fail(function () {
             if ($select.data('select2')) $select.select2('destroy');
-            $select.html('<option value="">Error loading priorities</option>').prop('disabled', true);
+            $select.html(`<option value="">Error loading ${placeholder}</option>`).prop('disabled', true);
             $select.select2({
                 theme: 'bootstrap-5',
                 width: '100%',
@@ -375,7 +416,7 @@ window.TTTaiga = { ...window.TTTaiga,
         });
     }
 
-    function taigaFetchSeverities(apiUrl, token, projectId, $select, selectedValue) {
+    function taigaFetchSeverities(apiUrl, token, projectId, $select, selectedValue, placeholder = 'Select Severity') {
         $.ajax({
             url: `api.php/severities`,
             data: { project: projectId },
@@ -388,7 +429,7 @@ window.TTTaiga = { ...window.TTTaiga,
             }
         }).done(function (severities) {
             if ($select.data('select2')) $select.select2('destroy');
-            let html = '<option value="">Select Severity</option>';
+            let html = `<option value="">${placeholder}</option>`;
             if (Array.isArray(severities)) {
                 severities.forEach(sev => {
                     html += `<option value="${sev.id}">${sev.name}</option>`;
@@ -399,7 +440,7 @@ window.TTTaiga = { ...window.TTTaiga,
             $select.select2({
                 theme: 'bootstrap-5',
                 width: '100%',
-                placeholder: 'Select Severity',
+                placeholder: placeholder,
                 allowClear: true,
                 dropdownParent: $select.closest('.modal').length && $select.closest('.modal').attr('id') ? $('#' + $select.closest('.modal').attr('id')) : $(document.body)
             });
@@ -409,7 +450,7 @@ window.TTTaiga = { ...window.TTTaiga,
         })
         .fail(function () {
             if ($select.data('select2')) $select.select2('destroy');
-            $select.html('<option value="">Error loading severities</option>').prop('disabled', true);
+            $select.html(`<option value="">Error loading ${placeholder}</option>`).prop('disabled', true);
             $select.select2({
                 theme: 'bootstrap-5',
                 width: '100%',
@@ -418,6 +459,44 @@ window.TTTaiga = { ...window.TTTaiga,
             });
         });
     }
+    /**
+     * Sync a user story's epic relations to exactly the chosen set.
+     * Taiga models epics as many-to-many and ignores `epic` on PATCH /userstories,
+     * so this deletes relations no longer chosen and adds the missing ones.
+     * currentIds may be passed to skip the GET (e.g. [] for a brand-new story).
+     */
+    function taigaSyncUserStoryEpics(usId, epicIds, currentIds, addOnly) {
+        const storyId = parseInt(usId, 10);
+        const target = (epicIds || []).map((id) => parseInt(id, 10)).filter((id) => !isNaN(id));
+        const done = $.Deferred();
+
+        const sync = function (existing) {
+            const current = (existing || []).map((id) => parseInt(id, 10));
+            // Bulk update cannot show per-item epics, so it only adds; single edit
+            // sends addOnly=false and the checkbox group is the exact desired set.
+            const desired = addOnly ? Array.from(new Set(current.concat(target))) : target;
+            const removals = current
+                .filter((id) => !desired.includes(id))
+                .map((id) => TTTaiga.API._delete('api.php/epics/' + id + '/related_userstories/' + storyId));
+            const additions = desired
+                .filter((id) => !current.includes(id))
+                .map((id) => TTTaiga.API.post('api.php/epics/' + id + '/related_userstories', {
+                    epic: id, user_story: storyId
+                }));
+            $.when.apply($, removals.concat(additions)).always(function () { done.resolve(); });
+        };
+
+        if (Array.isArray(currentIds)) {
+            sync(currentIds);
+        } else {
+            TTTaiga.API.get('api.php/userstories/' + storyId, {}, {}).done(function (us) {
+                const ids = us && Array.isArray(us.epics) ? us.epics.map((e) => e.id) : [];
+                sync(ids);
+            }).fail(function () { done.reject(); });
+        }
+        return done.promise();
+    }
+
     // --- Shared Filter Logic ---
 //
 // Filter dipersist antar modul list lewat sessionStorage + URL.

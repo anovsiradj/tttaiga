@@ -110,6 +110,13 @@
 					</div>
 				</div>
 
+				<div class="row">
+					<div class="col-md-12 mb-3">
+						<label for="bulkUpdateIssueDescription" class="form-label">Description</label>
+						<textarea class="form-control" id="bulkUpdateIssueDescription" rows="3" placeholder="Leave empty for no change" data-field="description"></textarea>
+					</div>
+				</div>
+
 				<div class="alert alert-warning">
 					<i class="bi bi-exclamation-triangle-fill me-2"></i>
 					This will apply changes to all selected isus.

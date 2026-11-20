@@ -81,8 +81,7 @@ TTTaiga.BulkUpdate = {
                 { key: 'assignee', label: 'Assign To', type: 'select', member: true, param: 'assigned_to' },
                 { key: 'usor', label: 'User Story', type: 'select', remote: '/userstories', param: 'user_story', format: (item) => `#${item.ref}: ${item.subject}` },
                 { key: 'sprint', label: 'Sprint', type: 'select', remote: '/milestones', param: 'milestone' },
-                { key: 'description', label: 'Description', type: 'textarea', param: 'description' },
-                { key: 'priority', label: 'Priority', type: 'select', param: 'priority', options: [{value:'', label:'No Change'}, {value:'1', label:'1 - Highest'}, {value:'2', label:'2'}, {value:'3', label:'3'}, {value:'4', label:'4'}, {value:'5', label:'5 - Lowest'}] }
+                { key: 'description', label: 'Description', type: 'textarea', param: 'description' }
             ],
             endpoint: '/tasks/',
             key: 'tasks',
@@ -95,9 +94,8 @@ TTTaiga.BulkUpdate = {
             fields: [
                 { key: 'status', label: 'Status', type: 'select', statusType: 'us', param: 'status' },
                 { key: 'assignee', label: 'Assign To', type: 'select', member: true, param: 'assigned_to' },
-                { key: 'epic', label: 'Epic', type: 'select', remote: '/epics', param: 'epic', format: (item) => `#${item.ref}: ${item.subject}` },
-                { key: 'description', label: 'Description', type: 'textarea', param: 'description' },
-                { key: 'priority', label: 'Priority', type: 'select', param: 'priority', options: [{value:'', label:'No Change'}, {value:'1', label:'1 - Highest'}, {value:'2', label:'2'}, {value:'3', label:'3'}, {value:'4', label:'4'}, {value:'5', label:'5 - Lowest'}] }
+                { key: 'epics', label: 'Epik', type: 'epics', param: 'epics' },
+                { key: 'description', label: 'Description', type: 'textarea', param: 'description' }
             ],
             endpoint: '/userstories/',
             key: 'usors',
@@ -111,7 +109,6 @@ TTTaiga.BulkUpdate = {
                 { key: 'status', label: 'Status', type: 'select', statusType: 'epic', param: 'status' },
                 { key: 'assignee', label: 'Assign To', type: 'select', member: true, param: 'assigned_to' },
                 { key: 'description', label: 'Description', type: 'textarea', param: 'description' },
-                { key: 'priority', label: 'Priority', type: 'select', param: 'priority', options: [{value:'', label:'No Change'}, {value:'1', label:'1 - Highest'}, {value:'2', label:'2'}, {value:'3', label:'3'}, {value:'4', label:'4'}, {value:'5', label:'5 - Lowest'}] },
                 { key: 'color', label: 'Color', type: 'color', param: 'color' }
             ],
             endpoint: '/epics/',
@@ -126,6 +123,8 @@ TTTaiga.BulkUpdate = {
                 { key: 'status', label: 'Status', type: 'select', statusType: 'issue', param: 'status' },
                 { key: 'assignee', label: 'Assign To', type: 'select', member: true, param: 'assigned_to' },
                 { key: 'description', label: 'Description', type: 'textarea', param: 'description' },
+                { key: 'type', label: 'Type', type: 'select', param: 'issue_type', source: 'issue-types' },
+                { key: 'severity', label: 'Severity', type: 'select', param: 'severity', source: 'severities' },
                 { key: 'priority', label: 'Priority', type: 'select', param: 'priority', options: [{value:'', label:'No Change'}, {value:'1', label:'1 - Highest'}, {value:'2', label:'2'}, {value:'3', label:'3'}, {value:'4', label:'4'}, {value:'5', label:'5 - Lowest'}] }
             ],
             endpoint: '/issues/',
@@ -156,7 +155,7 @@ TTTaiga.BulkUpdate = {
             endpoint: '/projects/',
             key: 'projects',
             label: 'Projects',
-            modalId: 'bulkUpdateProjectModal',
+            modalId: 'bulkUpdateProyekModal',
             listId: null
         }
     },
@@ -176,7 +175,7 @@ TTTaiga.BulkUpdate = {
                 TTTaiga.UI.notify('Modal not found', 'error');
                 return;
             }
-            var $list = $modal.find('#' + cfg.listId);
+            var $list = cfg.listId ? $modal.find('#' + cfg.listId) : $();
             if ($list.length) {
                 var html = items.map(item => `<div class="form-check disabled"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label">#${item.ref}: ${item.subject}</label></div>`).join('');
                 $list.html(html);
@@ -204,20 +203,17 @@ TTTaiga.BulkUpdate = {
                                 formatText: field.format || function(item) { return item.name || item.subject || item.full_name; },
                                 additionalParams: function() { return projectId ? { project: projectId } : {}; }
                             });
-                        } else if (field.key === 'type' || field.key === 'severity') {
-                            // Custom select fields - initialize with No Change option
+                        } else if (field.source === 'issue-types' || field.source === 'severities') {
                             if ($el.data('select2')) $el.select2('destroy');
-                            $el.empty();
-                            $el.prop('disabled', !projectId);
-                            $el.append(new Option(projectId ? 'No Change' : '', ''));
-                            $el.select2({
-                                theme: 'bootstrap-5',
-                                width: '100%',
-                                placeholder: projectId ? 'Select ' + field.key : '',
-                                allowClear: true,
-                                dropdownParent: $el.closest('.modal').length && $el.closest('.modal').attr('id') ? $('#' + $el.closest('.modal').attr('id')) : $(document.body)
-                            });
+                            if (!projectId) {
+                                $el.empty().append(new Option('Select project first', '')).prop('disabled', true);
+                            } else {
+                                var fetchOptions = field.source === 'issue-types' ? taigaFetchIssueTypes : taigaFetchSeverities;
+                                fetchOptions(window.apiUrl, window.taigaToken, projectId, $el, null, 'No Change');
+                            }
                         }
+                    } else if (field.type === 'epics') {
+                        TTTaiga.Form._populateEpicChecklist($el, projectId, []);
                     } else if (field.type === 'textarea') {
                         $el.val('');
                     } else if (field.type === 'text') {
@@ -266,9 +262,18 @@ TTTaiga.BulkUpdate = {
         }
         var updateData = {};
         var prefix = null;
+        var linkEpicIds = [];
         var hasField = false;
         cfg.fields.forEach(function(field) {
             var $el = $modal.find('[data-field="' + field.key + '"]');
+            // Epic relations are many-to-many; no tick = "No Change".
+            if (field.type === 'epics') {
+                var epicIds = $el.find('input:checked').map(function() {
+                    return parseInt($(this).val(), 10);
+                }).get();
+                if (epicIds.length) { linkEpicIds = epicIds; hasField = true; }
+                return;
+            }
             var val = $el.val();
             if (val && val !== '' && val !== 'null') {
                 if (field.param === 'closed') {
@@ -292,7 +297,7 @@ TTTaiga.BulkUpdate = {
             TTTaiga.UI.notify('Please select at least one field to update', 'warning');
             return;
         }
-                var $btn = $modal.find('#submitBulkUpdate, #submitBulkTaskUpdate, #submitBulkUpdateEpic, #submitBulkIssueUpdate, #submitBulkUpdateSprint, #submitBulkProjectUpdate');
+                var $btn = $modal.find('#submitBulkUpdate, #submitBulkTaskUpdate, #submitBulkUpdateEpic, #submitBulkIssueUpdate, #submitBulkUpdateSprint, #submitBulkProyekUpdate');
                 if (!$btn.length) $btn = $modal.find('.btn-primary[data-action="submit"]');
         $btn.prop('disabled', true).text('Updating...');
         $('.filter-toolbar, .tttaiga-bulk-handle').addClass('disabled');
@@ -300,12 +305,12 @@ TTTaiga.BulkUpdate = {
         var dataFn = updateData;
         if (type === 'projects' && prefix) {
             dataFn = function(item) {
-                var cleanName = item.name.replace(/^\[.*?\]\s*/, '');
+                var cleanName = String(item.name || item.subject || '').replace(/^\[.*?\]\s*/, '');
                 return { name: '[' + prefix + '] ' + cleanName };
             };
         }
 
-        taigaExecuteBulkParallel(cfg.endpoint, items, 'PATCH', dataFn, function(successCount, errorCount) {
+        var finish = function(successCount, errorCount) {
             $btn.prop('disabled', false).text('Update ' + cfg.label);
             $('.filter-toolbar, .tttaiga-bulk-handle').removeClass('disabled');
             if (errorCount === 0) {
@@ -318,10 +323,28 @@ TTTaiga.BulkUpdate = {
                 else if (type === 'epics') TTTaiga.Epiks.load();
                 else if (type === 'issues') TTTaiga.Issues.load();
                 else if (type === 'sprints') TTTaiga.Sprints.load();
-                else if (type === 'projects') TTTaiga.Projects.load();
+                else if (type === 'projects') TTTaiga.Proyeks.load();
             } else {
                 TTTaiga.UI.notify('Updated ' + successCount + ' ' + cfg.label.toLowerCase() + ', but ' + errorCount + ' failed.', 'danger');
             }
+        };
+        var linkEpics = function(successCount) {
+            var requests = items.map(function(item) {
+                // Bulk update has no per-item epic state; checked epics are added.
+                return taigaSyncUserStoryEpics(item.id, linkEpicIds, undefined, true);
+            });
+            $.when.apply($, requests).always(function() { finish(successCount, 0); });
+        };
+
+        if (Object.keys(updateData).length === 0 && linkEpicIds.length) {
+            // Only an epic was chosen: no PATCH needed, just create the relations.
+            linkEpics(items.length);
+            return;
+        }
+
+        taigaExecuteBulkParallel(cfg.endpoint, items, 'PATCH', dataFn, function(successCount, errorCount) {
+            if (linkEpicIds.length && errorCount === 0) linkEpics(successCount);
+            else finish(successCount, errorCount);
         }, { showProgress: true });
     }
 };

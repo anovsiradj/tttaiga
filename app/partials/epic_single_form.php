@@ -34,10 +34,6 @@
 					</div>
 					<div class="row mt-3">
 						<div class="col-md-6">
-							<label class="form-label">Priority</label>
-							<input type="number" class="form-control" id="singleEpicPriority" min="1" max="100">
-						</div>
-						<div class="col-md-6">
 							<label class="form-label">Color</label>
 							<input type="color" class="form-control form-control-color" id="singleEpicColor" value="#fd7e14">
 						</div>
